@@ -31,7 +31,7 @@ public class Option implements Serializable {
     private Integer id;
 
     @ApiModelProperty("key")
-    @TableField(name = "key", type = "varchar", length = 256)
+    @TableField(name = "key", type = "varchar", length = 256, isEmpty = false)
     private String key;
 
     @ApiModelProperty("value")

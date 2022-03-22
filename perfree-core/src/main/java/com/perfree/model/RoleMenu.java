@@ -8,8 +8,8 @@ public class RoleMenu {
 
     @TableField(name = "roleId", type = "int")
     private Integer roleId;
-    @TableField(name = "menuId", type = "int")
-    private Integer menuId;
+    @TableField(name = "menuId", type = "varchar", length = 64)
+    private String menuId;
 
     public Integer getRoleId() {
         return roleId;
@@ -19,11 +19,11 @@ public class RoleMenu {
         this.roleId = roleId;
     }
 
-    public Integer getMenuId() {
+    public String getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Integer menuId) {
+    public void setMenuId(String menuId) {
         this.menuId = menuId;
     }
 }

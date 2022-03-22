@@ -116,8 +116,8 @@ public class DataBaseUtils {
                 addSql.append(field.isEmpty() ? "NULL " : "NOT NULL ");
                 addSql.append(StrUtil.isEmpty(field.getDefaultValue()) ? "" : StrUtil.format("DEFAULT {} ", field.getDefaultValue()));
                 addSql.append(StrUtil.isEmpty(field.getComment()) ? "" : StrUtil.format("COMMENT '{}'", field.getComment()));
-                connection.prepareStatement(addSql.toString()).execute();
                 LOGGER.info("数据库操作:{}", addSql);
+                connection.prepareStatement(addSql.toString()).execute();
             }
             connection.close();
         }catch (Exception e) {

@@ -32,7 +32,7 @@ public class Attach implements Serializable {
     private Integer id;
 
     @ApiModelProperty("附件名")
-    @TableField(name = "title", length = 256, type = "varchar")
+    @TableField(name = "name", length = 256, type = "varchar")
     private String name;
 
     @ApiModelProperty("附件描述")

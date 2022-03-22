@@ -32,7 +32,7 @@ public class Category implements Serializable {
     private Integer id;
 
     @ApiModelProperty("分类名")
-    @TableField(name = "title", length = 256, type = "varchar")
+    @TableField(name = "name", length = 256, type = "varchar")
     private String name;
 
     @ApiModelProperty("父级id")

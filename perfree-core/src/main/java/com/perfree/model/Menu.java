@@ -25,11 +25,11 @@ public class Menu implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @TableField(name = "id", type = "varchar", length = 64,isEmpty = false, isPrimary = true)
     private String id;
 
     @ApiModelProperty("父级id")
-    @TableField(name = "pid", type = "int")
+    @TableField(name = "pid", type = "varchar", length = 64)
     private String pid;
 
     @ApiModelProperty("菜单名")
