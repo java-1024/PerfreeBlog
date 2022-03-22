@@ -8,4 +8,5 @@ import java.util.List;
 public interface InstallService {
     void install(InstallForm installForm) throws Exception;
     List<TableModel> queryMysqlTables();
+    List<TableModel> querySqliteTables();
 }

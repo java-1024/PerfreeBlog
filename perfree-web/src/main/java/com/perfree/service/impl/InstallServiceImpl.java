@@ -2,9 +2,11 @@ package com.perfree.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.dialect.Props;
 import com.perfree.commons.DynamicDataSource;
 import com.perfree.dataBase.DataBaseUtils;
+import com.perfree.dataBase.TableFieldModel;
 import com.perfree.dataBase.TableModel;
 import com.perfree.enums.SystemEnum;
 import com.perfree.form.InstallForm;
@@ -40,7 +42,8 @@ public class InstallServiceImpl implements InstallService {
         }
         if (installForm.getDataBaseType().equals("sqlite")) {
             initSqliteDataBase();
-            // DataBaseUtils.initSqliteDataBase();
+            List<TableModel> tableModelList = querySqliteTables();
+            DataBaseUtils.initSqliteDataBase();
         }
         installInitOperate();
     }
@@ -48,6 +51,16 @@ public class InstallServiceImpl implements InstallService {
     @Override
     public List<TableModel> queryMysqlTables() {
         return installMapper.queryMysqlTables();
+    }
+
+    @Override
+    public List<TableModel> querySqliteTables() {
+        List<TableModel> tableModels = installMapper.querySqliteTables();
+        for (TableModel tableModel : tableModels) {
+            List<TableFieldModel> sqliteFieldList = installMapper.getSqliteFieldList(StrUtil.format("PRAGMA table_info(`{}`)",tableModel.getName()));
+            tableModel.setFieldList(sqliteFieldList);
+        }
+        return tableModels;
     }
 
     /**

@@ -207,6 +207,8 @@ public class DataBaseUtils {
                         tableFieldModel.getLength() > 0 ? StrUtil.format("({})", tableFieldModel.getLength()) : ""));
                 // 字段是否允许为空
                 fieldSql.append(tableFieldModel.isEmpty() ? "": "NOT NULL ");
+                // 默认值
+                fieldSql.append(StrUtil.isEmpty(tableFieldModel.getDefaultValue()) ? "" : StrUtil.format("DEFAULT {} ", tableFieldModel.getDefaultValue()));
                 // 是否为主键
                 if (tableFieldModel.isPrimary()) {
                     fieldSql.append("PRIMARY KEY ");

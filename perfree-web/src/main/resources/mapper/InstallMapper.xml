@@ -2,16 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.perfree.mapper.InstallMapper">
 
-    <resultMap id="TABLE_MAP" type="com.perfree.dataBase.TableModel">
+    <resultMap id="MYSQL_TABLE_MAP" type="com.perfree.dataBase.TableModel">
         <result property="name" column="name"></result>
-        <collection property="fieldList" select="getFieldList" column="name"></collection>
+        <collection property="fieldList" select="getMysqlFieldList" column="name"></collection>
     </resultMap>
 
-    <select id="queryMysqlTables" resultMap="TABLE_MAP">
+    <select id="queryMysqlTables" resultMap="MYSQL_TABLE_MAP">
         SELECT TABLE_NAME AS `name` FROM information_schema.TABLES WHERE TABLE_SCHEMA = (SELECT DATABASE ())
     </select>
 
-    <select id="getFieldList" resultType="com.perfree.dataBase.TableFieldModel">
+    <select id="getMysqlFieldList" resultType="com.perfree.dataBase.TableFieldModel">
         SELECT C.COLUMN_NAME AS `name`,C.DATA_TYPE as `type`,
                CASE C.DATA_TYPE WHEN 'longtext' THEN '' ELSE IFNULL(C.CHARACTER_MAXIMUM_LENGTH, 0) END `length`,
                C.COLUMN_COMMENT AS `comment`,
@@ -24,5 +24,23 @@
             AND T.TABLE_SCHEMA = C.TABLE_SCHEMA
         WHERE T.TABLE_SCHEMA = (SELECT DATABASE ()) and T.TABLE_NAME = #{name}
         ORDER BY C.TABLE_NAME, C.ORDINAL_POSITION
+    </select>
+
+
+    <resultMap id="SQLITE_FIELD_MAP" type="com.perfree.dataBase.TableFieldModel">
+        <result property="name" column="name"></result>
+        <result property="type" column="type"></result>
+        <result property="defaultValue" column="dflt_value"></result>
+        <result property="empty" column="notnull"></result>
+        <result property="primary" column="pk"></result>
+    </resultMap>
+
+
+    <select id="querySqliteTables" resultType="com.perfree.dataBase.TableModel">
+        SELECT name FROM sqlite_master where type = 'table'
+    </select>
+
+    <select id="getSqliteFieldList" resultMap="SQLITE_FIELD_MAP">
+        ${sql}
     </select>
 </mapper>
