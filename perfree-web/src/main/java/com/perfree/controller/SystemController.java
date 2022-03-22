@@ -18,6 +18,7 @@ public class SystemController{
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ResponseBean unauthorized(@PathVariable String message) {
+        LOGGER.error("401:{}", message);
         if (StringUtils.isNotBlank(message)){
             return ResponseBean.fail(401, message, null);
         }

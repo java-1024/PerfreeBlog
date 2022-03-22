@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.perfree.dataBase.Table;
+import com.perfree.dataBase.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,24 +21,30 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_tag")
 @ApiModel(value = "Tag对象", description = "")
+@Table(value = "p_tag")
 public class Tag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
+    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("标签名")
+    @TableField(name = "name", type = "varchar", length = 256)
     private String name;
 
     @ApiModelProperty("添加人")
+    @TableField(name = "userId", type = "int")
     private Integer userId;
 
     @ApiModelProperty("创建时间")
+    @TableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("修改时间")
+    @TableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

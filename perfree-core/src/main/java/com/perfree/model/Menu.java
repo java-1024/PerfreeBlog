@@ -3,6 +3,9 @@ package com.perfree.model;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.perfree.dataBase.Table;
+import com.perfree.dataBase.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,41 +19,53 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_menu")
 @ApiModel(value = "Menu对象", description = "")
+@Table(value = "p_menu")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
+    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private String id;
 
     @ApiModelProperty("父级id")
+    @TableField(name = "pid", type = "int")
     private String pid;
 
     @ApiModelProperty("菜单名")
+    @TableField(name = "name", type = "varchar", length = 128)
     private String name;
 
     @ApiModelProperty("菜单链接")
+    @TableField(name = "url", type = "varchar", length = 128)
     private String url;
 
     @ApiModelProperty("菜单图标")
+    @TableField(name = "icon", type = "varchar", length = 64)
     private String icon;
 
     @ApiModelProperty("排序序号")
+    @TableField(name = "seq", type = "int", defaultValue = "0")
     private Integer seq;
 
     @ApiModelProperty("菜单类型0:前台,1:后台")
+    @TableField(name = "type", type = "int", defaultValue = "0")
     private Integer type;
 
     @ApiModelProperty("菜单打开方式:0本页,1:新窗口")
+    @TableField(name = "target", type = "int", defaultValue = "0")
     private Integer target;
 
     @ApiModelProperty("菜单状态0:启用,1禁用")
+    @TableField(name = "status", type = "int", defaultValue = "0")
     private Integer status;
 
     @ApiModelProperty("创建时间")
+    @TableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
+    @TableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public String getId() {

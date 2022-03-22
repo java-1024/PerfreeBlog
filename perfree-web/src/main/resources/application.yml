@@ -1,6 +1,6 @@
 server:
   # 端口
-  port: 8080
+  port: 8081
   servlet:
     encoding:
       force: true
@@ -14,7 +14,7 @@ server:
     max-connections: 6500
     connection-timeout: 12000
 
-version: 2.3.1
+version: 3.0.0
 # 默认文件上传地址
 web.upload-path: resources/upload/
 # 程序升级备份目录
@@ -32,10 +32,6 @@ spring:
       # 总上传的数据大小,默认-1为不限制,如需限制大小改为具体的大小即可,如100MB
       max-request-size: -1
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/perfree?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: 215607..
-    driver-class-name: com.mysql.jdbc.Driver
     druid:
       initial-size: 5
       max-active: 20
@@ -60,22 +56,21 @@ spring:
       prefix: /
 mybatis-plus:
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    # log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     map-underscore-to-camel-case: true
   mapper-locations: classpath*:mapper/*.xml
-
 logging:
   level:
     com.perfree: error
     com.perfree.config.PostAppRunner: info
     com.perfree.Application: info
     com.perfree.plugins: info
+    com.perfree.dataBase: info
   file:
     name: ./logs/Perfree.log
     max-history: 7
     max-size: 10MB
-
 swagger:
   enable: true
   application-name: PerfreeBlog

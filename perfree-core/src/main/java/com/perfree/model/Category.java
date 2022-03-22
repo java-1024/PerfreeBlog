@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.perfree.dataBase.Table;
+import com.perfree.dataBase.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,42 +21,54 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_category")
 @ApiModel(value = "Category对象", description = "分类表")
+@Table(value = "p_category")
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
+    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("分类名")
+    @TableField(name = "title", length = 256, type = "varchar")
     private String name;
 
     @ApiModelProperty("父级id")
+    @TableField(name = "pid", type = "int")
     private Integer pid;
 
     @ApiModelProperty("描述")
+    @TableField(name = "desc", length = 512, type = "varchar")
     private String desc;
 
     @ApiModelProperty("文章数量")
+    @TableField(name = "count", type = "int", defaultValue = "0")
     private Integer count;
 
     @ApiModelProperty("SEO关键字")
+    @TableField(name = "metaKeywords", length = 256, type = "varchar")
     private String metaKeywords;
 
     @ApiModelProperty("SEO描述内容")
+    @TableField(name = "metaDescription", length = 512, type = "varchar")
     private String metaDescription;
 
     @ApiModelProperty("封面图")
+    @TableField(name = "thumbnail", length = 256, type = "varchar")
     private String thumbnail;
 
     @ApiModelProperty("状态0:正常,1禁用")
+    @TableField(name = "status", type = "int", defaultValue = "0")
     private Integer status;
 
     @ApiModelProperty("创建时间")
+    @TableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
+    @TableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {
