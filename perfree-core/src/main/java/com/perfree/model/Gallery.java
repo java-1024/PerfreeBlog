@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,42 +21,42 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_gallery")
 @ApiModel(value = "Gallery对象", description = "")
-@Table(value = "p_gallery")
+@DataTable(value = "p_gallery")
 public class Gallery implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("图库ID")
-    @TableField(name = "gallerysId", type = "int", isEmpty = false)
+    @DataTableField(name = "gallerysId", type = "int", isEmpty = false)
     private Integer gallerysId;
 
     @ApiModelProperty("名字")
-    @TableField(name = "name", length = 256, type = "varchar", isEmpty = false)
+    @DataTableField(name = "name", length = 256, type = "varchar", isEmpty = false)
     private String name;
 
     @ApiModelProperty("描述")
-    @TableField(name = "desc", length = 1024, type = "varchar")
+    @DataTableField(name = "desc", length = 1024, type = "varchar")
     private String desc;
 
     @ApiModelProperty("url")
-    @TableField(name = "url", length = 256, type = "varchar")
+    @DataTableField(name = "url", length = 256, type = "varchar")
     private String url;
 
     @ApiModelProperty("用户ID")
-    @TableField(name = "userId", type = "int", isEmpty = false)
+    @DataTableField(name = "userId", type = "int", isEmpty = false)
     private Integer userId;
 
     @ApiModelProperty("创建时间")
-    @TableField(name = "createTime", type = "datetime")
+    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @TableField(name = "updateTime", type = "datetime")
+    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

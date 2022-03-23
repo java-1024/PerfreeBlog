@@ -1,14 +1,14 @@
 package com.perfree.model;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 
-@Table(value = "p_role_menu")
+@DataTable(value = "p_role_menu")
 public class RoleMenu {
 
-    @TableField(name = "roleId", type = "int")
+    @DataTableField(name = "roleId", type = "int")
     private Integer roleId;
-    @TableField(name = "menuId", type = "varchar", length = 64)
+    @DataTableField(name = "menuId", type = "varchar", length = 64)
     private String menuId;
 
     public Integer getRoleId() {

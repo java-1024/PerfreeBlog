@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface OptionService extends IService<Option> {
 
+    Option getByKey(String value);
 }

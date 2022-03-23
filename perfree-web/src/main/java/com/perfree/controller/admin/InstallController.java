@@ -41,7 +41,7 @@ public class InstallController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
-            return ResponseBean.fail("数据库连接或创建数据库失败:" + e.getMessage(), null);
+            return ResponseBean.fail("数据库连接或初始化数据库失败:" + e.getMessage(), null);
         }
     }
 }

@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,70 +21,70 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_comment")
 @ApiModel(value = "Comment对象", description = "")
-@Table(value = "p_comment")
+@DataTable(value = "p_comment")
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("文章id")
-    @TableField(name = "articleId", type = "int", isEmpty = false)
+    @DataTableField(name = "articleId", type = "int", isEmpty = false)
     private Integer articleId;
 
     @ApiModelProperty("父级id")
-    @TableField(name = "pid", type = "int")
+    @DataTableField(name = "pid", type = "int")
     private Integer pid;
 
     @ApiModelProperty("顶层父级id")
-    @TableField(name = "topPid", type = "int", defaultValue = "-1")
+    @DataTableField(name = "topPid", type = "int", defaultValue = "-1")
     private Integer topPid;
 
     @ApiModelProperty("用户iD")
-    @TableField(name = "userId", type = "int", isEmpty = false)
+    @DataTableField(name = "userId", type = "int", isEmpty = false)
     private Integer userId;
 
     @ApiModelProperty("评论内容")
-    @TableField(name = "content", length = 2048, type = "varchar", isEmpty = false)
+    @DataTableField(name = "content", length = 2048, type = "varchar", isEmpty = false)
     private String content;
 
     @ApiModelProperty("状态:0正常,1:待审核")
-    @TableField(name = "status", type = "int", isEmpty = false)
+    @DataTableField(name = "status", type = "int", isEmpty = false)
     private Integer status;
 
     @ApiModelProperty("头像")
-    @TableField(name = "avatar", length = 256, type = "varchar")
+    @DataTableField(name = "avatar", length = 256, type = "varchar")
     private String avatar;
 
     @ApiModelProperty("网站地址")
-    @TableField(name = "website", length = 256, type = "varchar")
+    @DataTableField(name = "website", length = 256, type = "varchar")
     private String website;
 
     @ApiModelProperty("邮箱")
-    @TableField(name = "email", length = 256, type = "varchar")
+    @DataTableField(name = "email", length = 256, type = "varchar")
     private String email;
 
     @ApiModelProperty("评论人")
-    @TableField(name = "userName", length = 64, type = "varchar")
+    @DataTableField(name = "userName", length = 64, type = "varchar")
     private String userName;
 
     @ApiModelProperty("设备类型")
-    @TableField(name = "device", length = 64, type = "varchar")
+    @DataTableField(name = "device", length = 64, type = "varchar")
     private String device;
 
     @ApiModelProperty("IP地址")
-    @TableField(name = "ip", length = 64, type = "varchar")
+    @DataTableField(name = "ip", length = 64, type = "varchar")
     private String ip;
 
     @ApiModelProperty("创建时间")
-    @TableField(name = "createTime", type = "datetime")
+    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @TableField(name = "updateTime", type = "datetime")
+    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

@@ -3,8 +3,8 @@ package com.perfree.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.perfree.dataBase.TableField;
-import com.perfree.dataBase.Table;
+import com.perfree.dataBase.DataTableField;
+import com.perfree.dataBase.DataTable;
 import com.perfree.dataBase.Index;
 import com.perfree.dataBase.UniqueConstraints;
 import io.swagger.annotations.ApiModel;
@@ -23,101 +23,101 @@ import java.util.Date;
  */
 @TableName("p_article")
 @ApiModel(value = "Article对象", description = "")
-@Table(value = "p_article", uniqueConstraints = {@UniqueConstraints({"status","type"})}, index = {@Index("slug")})
+@DataTable(value = "p_article", uniqueConstraints = {@UniqueConstraints({"status","type"})}, index = {@Index("slug")})
 public class Article implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("文章标题")
-    @TableField(name = "title", length = 256, type = "varchar", isEmpty = false)
+    @DataTableField(name = "title", length = 256, type = "varchar", isEmpty = false)
     private String title;
 
     @ApiModelProperty("文章内容")
-    @TableField(name = "content", type = "longtext", isEmpty = false)
+    @DataTableField(name = "content", type = "longtext", isEmpty = false)
     private String content;
 
     @ApiModelProperty("文章内容类型:html/markdown")
-    @TableField(name = "contentModel", length = 32, type = "varchar", isEmpty = false)
+    @DataTableField(name = "contentModel", length = 32, type = "varchar", isEmpty = false)
     private String contentModel;
 
     @ApiModelProperty("解析后的文章内容")
-    @TableField(name = "parseContent", type = "longtext")
+    @DataTableField(name = "parseContent", type = "longtext")
     private String parseContent;
 
     @ApiModelProperty("类型:article文章,page页面")
-    @TableField(name = "type", length = 32, type = "varchar", isEmpty = false)
+    @DataTableField(name = "type", length = 32, type = "varchar", isEmpty = false)
     private String type;
 
     @ApiModelProperty("文章类型: 0默认, 1置顶")
-    @TableField(name = "articleType", type = "int", defaultValue = "0")
+    @DataTableField(name = "articleType", type = "int", defaultValue = "0")
     private Integer articleType;
 
     @ApiModelProperty("状态0:已发布,1:草稿")
-    @TableField(name = "status", type = "int", defaultValue = "1")
+    @DataTableField(name = "status", type = "int", defaultValue = "1")
     private Integer status;
 
     @ApiModelProperty("文章摘要")
-    @TableField(name = "summary", length = 1024, type = "varchar")
+    @DataTableField(name = "summary", length = 1024, type = "varchar")
     private String summary;
 
     @ApiModelProperty("所属分类")
-    @TableField(name = "categoryId", type = "int")
+    @DataTableField(name = "categoryId", type = "int")
     private Integer categoryId;
 
     @ApiModelProperty("SEO关键字")
-    @TableField(name = "metaKeywords",  length = 256, type = "varchar")
+    @DataTableField(name = "metaKeywords",  length = 256, type = "varchar")
     private String metaKeywords;
 
     @ApiModelProperty("SEO描述")
-    @TableField(name = "metaDescription",  length = 512, type = "varchar")
+    @DataTableField(name = "metaDescription",  length = 512, type = "varchar")
     private String metaDescription;
 
     @ApiModelProperty("缩略图")
-    @TableField(name = "thumbnail",  length = 256, type = "varchar")
+    @DataTableField(name = "thumbnail",  length = 256, type = "varchar")
     private String thumbnail;
 
     @ApiModelProperty("slug")
-    @TableField(name = "slug",  length = 64, type = "varchar")
+    @DataTableField(name = "slug",  length = 64, type = "varchar")
     private String slug;
 
     @ApiModelProperty("评论数")
-    @TableField(name = "commentCount", type = "bigint",defaultValue = "0")
+    @DataTableField(name = "commentCount", type = "bigint",defaultValue = "0")
     private Long commentCount;
 
     @ApiModelProperty("访问量")
-    @TableField(name = "viewCount", type = "bigint",defaultValue = "0")
+    @DataTableField(name = "viewCount", type = "bigint",defaultValue = "0")
     private Long viewCount;
 
     @ApiModelProperty("点赞数量")
-    @TableField(name = "greatCount", type = "bigint",defaultValue = "0")
+    @DataTableField(name = "greatCount", type = "bigint",defaultValue = "0")
     private Long greatCount;
 
     @ApiModelProperty("创建人")
-    @TableField(name = "userId", type = "int")
+    @DataTableField(name = "userId", type = "int")
     private Integer userId;
 
     @ApiModelProperty("是否允许评论0:否,1是")
-    @TableField(name = "isComment", type = "int")
+    @DataTableField(name = "isComment", type = "int")
     private Integer isComment;
 
     @ApiModelProperty("标识")
-    @TableField(name = "flag",  length = 128, type = "varchar")
+    @DataTableField(name = "flag",  length = 128, type = "varchar")
     private String flag;
 
     @ApiModelProperty("模板")
-    @TableField(name = "template",  length = 128, type = "varchar")
+    @DataTableField(name = "template",  length = 128, type = "varchar")
     private String template;
 
     @ApiModelProperty("创建时间")
-    @TableField(name = "createTime", type = "datetime")
+    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @TableField(name = "updateTime", type = "datetime")
+    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

@@ -1,12 +1,13 @@
 package com.perfree.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -20,23 +21,33 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_option")
 @ApiModel(value = "Option对象", description = "")
-@Table(value = "p_option")
+@DataTable(value = "p_option")
 public class Option implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("key")
-    @TableField(name = "key", type = "varchar", length = 256, isEmpty = false)
+    @TableField("`key`")
+    @DataTableField(name = "key", type = "varchar", length = 256, isEmpty = false)
     private String key;
 
     @ApiModelProperty("value")
-    @TableField(name = "value", type = "longtext")
+    @TableField("`value`")
+    @DataTableField(name = "value", type = "longtext")
     private String value;
+
+    public Option(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public Option() {
+    }
 
     public Integer getId() {
         return id;

@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 @Documented
-public @interface TableField {
+public @interface DataTableField {
     String name();
     String type();
     int length() default 0;

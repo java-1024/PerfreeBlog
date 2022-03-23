@@ -1,13 +1,12 @@
 package com.perfree.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,58 +20,60 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_user")
 @ApiModel(value = "User对象", description = "")
-@Table(value = "p_user")
+@DataTable(value = "p_user")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("账户")
-    @TableField(name = "account", type = "varchar", length = 32)
+    @DataTableField(name = "account", type = "varchar", length = 32)
     private String account;
 
     @ApiModelProperty("账户名")
-    @TableField(name = "userName", type = "varchar", length = 32)
+    @DataTableField(name = "userName", type = "varchar", length = 32)
     private String userName;
 
     @ApiModelProperty("密码")
-    @TableField(name = "password", type = "varchar", length = 32)
+    @DataTableField(name = "password", type = "varchar", length = 32)
     private String password;
 
     @ApiModelProperty("盐值")
-    @TableField(name = "salt", type = "varchar", length = 32)
+    @DataTableField(name = "salt", type = "varchar", length = 32)
     private String salt;
 
     @ApiModelProperty("状态:0正常,1禁用")
-    @TableField(name = "status", type = "int", defaultValue = "0")
+    @DataTableField(name = "status", type = "int", defaultValue = "0")
     private Integer status;
 
     @ApiModelProperty("头像")
-    @TableField(name = "avatar", type = "varchar", length = 256)
+    @DataTableField(name = "avatar", type = "varchar", length = 256)
     private String avatar;
 
     @ApiModelProperty("角色id")
-    @TableField(name = "roleId", type = "int")
+    @DataTableField(name = "roleId", type = "int")
     private Integer roleId;
 
     @ApiModelProperty("邮箱")
-    @TableField(name = "email", type = "varchar", length = 128)
+    @DataTableField(name = "email", type = "varchar", length = 128)
     private String email;
 
     @ApiModelProperty("网站地址")
-    @TableField(name = "website", type = "varchar", length = 256)
+    @DataTableField(name = "website", type = "varchar", length = 256)
     private String website;
 
     @ApiModelProperty("创建时间")
-    @TableField(name = "createTime", type = "datetime")
+    @DataTableField(name = "createTime", type = "datetime")
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @TableField(name = "updateTime", type = "datetime")
+    @DataTableField(name = "updateTime", type = "datetime")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     private Role role;

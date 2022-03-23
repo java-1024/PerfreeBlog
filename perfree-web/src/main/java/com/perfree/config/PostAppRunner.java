@@ -3,7 +3,7 @@ package com.perfree.config;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.setting.dialect.Props;
-import com.perfree.Application;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.perfree.commons.DynamicDataSource;
 import com.perfree.dataBase.DataBaseUtils;
 import com.perfree.dataBase.TableModel;
@@ -15,10 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.util.List;
 
@@ -57,21 +55,26 @@ public class PostAppRunner implements ApplicationRunner {
         if (StringUtils.isBlank(installStatus)){
             return false;
         }
-        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.url(dbSetting.getStr("url"));
-        if (dbSetting.getStr("type").equals("mysql")){
-            dataSourceBuilder.username(dbSetting.getStr("username"));
-            dataSourceBuilder.password(dbSetting.getStr("password"));
+        DruidDataSource druidDataSource = DynamicDataSource.getDataSource();
+        if (druidDataSource.isInited()){
+            druidDataSource.close();
+            druidDataSource = new DruidDataSource();
         }
-        dataSourceBuilder.driverClassName(dbSetting.getStr("driverClassName"));
-        DataSource dataSource = dataSourceBuilder.build();
-        DynamicDataSource.setDataSource(dataSource,dbSetting.getStr("type"));
-        dbSetting.autoLoad(true);
+        druidDataSource.setUrl(dbSetting.getStr("url"));
         if (dbSetting.getStr("type").equals("mysql")){
+            druidDataSource.setUsername(dbSetting.getStr("username"));
+            druidDataSource.setPassword(dbSetting.getStr("password"));
+        }
+        druidDataSource.setDriverClassName(dbSetting.getStr("driverClassName"));
+        DynamicDataSource.setDataSource(druidDataSource,dbSetting.getStr("type"));
+        dbSetting.autoLoad(true);
+        if (dbSetting.getStr("type").equals(SystemEnum.DB_TYPE_MYSQL.getValue())){
             List<TableModel> tableModelList = installService.queryMysqlTables();
             DataBaseUtils.initOrUpdateMysqlDataBase(tableModelList);
             return true;
-        } else if (dbSetting.getStr("type").equals("sqlite")){
+        } else if (dbSetting.getStr("type").equals(SystemEnum.DB_TYPE_SQLITE.getValue())){
+            List<TableModel> tableModelList = installService.querySqliteTables();
+            DataBaseUtils.initOrUpdateSqliteDataBase(tableModelList);
             return true;
         } else{
             return false;

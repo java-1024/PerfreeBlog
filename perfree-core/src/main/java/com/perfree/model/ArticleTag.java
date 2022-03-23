@@ -1,13 +1,13 @@
 package com.perfree.model;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 
-@Table(value = "p_article_tag")
+@DataTable(value = "p_article_tag")
 public class ArticleTag {
-    @TableField(name = "articleId", type = "int")
+    @DataTableField(name = "articleId", type = "int")
     private Integer articleId;
-    @TableField(name = "tagId", type = "int")
+    @DataTableField(name = "tagId", type = "int")
     private Integer tagId;
 
     public Integer getArticleId() {

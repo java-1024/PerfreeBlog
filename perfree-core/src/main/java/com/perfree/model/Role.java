@@ -1,13 +1,12 @@
 package com.perfree.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
-import com.perfree.dataBase.Table;
-import com.perfree.dataBase.TableField;
+import com.perfree.dataBase.DataTable;
+import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,34 +20,36 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_role")
 @ApiModel(value = "Role对象", description = "")
-@Table(value = "p_role")
+@DataTable(value = "p_role")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
+    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("角色名")
-    @TableField(name = "name", type = "varchar", length = 32)
+    @DataTableField(name = "name", type = "varchar", length = 32)
     private String name;
 
     @ApiModelProperty("角色描述")
-    @TableField(name = "description", type = "varchar", length = 256)
+    @DataTableField(name = "description", type = "varchar", length = 256)
     private String description;
 
     @ApiModelProperty("角色码")
-    @TableField(name = "code", type = "varchar", length = 32)
+    @DataTableField(name = "code", type = "varchar", length = 32)
     private String code;
 
     @ApiModelProperty("创建时间")
-    @TableField(name = "createTime", type = "datetime")
+    @DataTableField(name = "createTime", type = "datetime")
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @TableField(name = "updateTime", type = "datetime")
+    @DataTableField(name = "updateTime", type = "datetime")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     public Integer getId() {
@@ -92,6 +93,16 @@ public class Role implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Role(){
+
+    }
+
+    public Role(String name, String description, String code) {
+        this.name = name;
+        this.description = description;
+        this.code = code;
     }
 
     @Override

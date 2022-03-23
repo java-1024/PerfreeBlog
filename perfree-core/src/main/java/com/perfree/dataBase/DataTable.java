@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Documented
 @Component
-public @interface Table {
+public @interface DataTable {
     String value();
     Index[] index() default {};
     UniqueConstraints[] uniqueConstraints() default {};

@@ -1,12 +1,7 @@
 package com.perfree.enums;
 
-public enum SystemEnum {
-
-    DB_SETTING_PATH("数据库配置文件地址", "resources/db.properties"),
-    DB_TYPE_MYSQL("MYSQL", "mysql"),
-    DB_TYPE_SQLITE("SQLITE", "sqlite"),
-    STR_SUCCESS("success", "success");
-
+public enum OptionEnum {
+    IS_INSTALLED("是否已安装", "IS_INSTALLED");
     private String key;
 
     private String value;
@@ -27,7 +22,7 @@ public enum SystemEnum {
         this.value = value;
     }
 
-    SystemEnum(String key, String value) {
+    OptionEnum(String key, String value) {
         this.key = key;
         this.value = value;
     }
