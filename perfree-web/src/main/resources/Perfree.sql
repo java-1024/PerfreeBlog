@@ -4,6 +4,7 @@ CREATE TABLE `p_article`  (
                               `title` varchar(256) NOT NULL COMMENT '文章标题',
                               `content` longtext NULL COMMENT '文章内容',
                               `contentModel` varchar(32) NULL COMMENT '文章内容类型:html/markdown',
+                              `parseContent` longtext NULL COMMENT '解析后的文章内容',
                               `type` varchar(32) NULL DEFAULT NULL COMMENT '文章类型:article文章,page页面',
                               `summary` varchar(1024) NULL DEFAULT NULL COMMENT '文章摘要',
                               `categoryId` int(0) NULL DEFAULT NULL COMMENT '所属分类',
@@ -11,10 +12,11 @@ CREATE TABLE `p_article`  (
                               `metaDescription` varchar(512) NULL DEFAULT NULL COMMENT 'SEO描述',
                               `thumbnail` varchar(256) NULL DEFAULT NULL COMMENT '缩略图',
                               `slug` varchar(128) NULL DEFAULT NULL COMMENT 'slug',
-                              `isTop` int(0) NULL DEFAULT 0 COMMENT '是否置顶0:否,1:是',
+                              `articleType` int(0) NULL DEFAULT 0 COMMENT '文章类型: 0默认, 1置顶',
                               `status` int(0) NULL DEFAULT 0 COMMENT '状态0:已发布,1:草稿',
                               `commentCount` int(0) NULL DEFAULT 0 COMMENT '评论数',
                               `viewCount` int(0) NULL DEFAULT 0 COMMENT '访问量',
+                              `greatCount` int(0) NULL DEFAULT 0 COMMENT '点赞数',
                               `userId` int(0) NOT NULL COMMENT '创建人',
                               `isComment` int(0) NULL DEFAULT 1 COMMENT '是否允许评论0:否,1是',
                               `flag` varchar(256) NULL COMMENT '标识',
@@ -55,6 +57,7 @@ CREATE TABLE `p_category`  (
                                `count` int(0) NOT NULL DEFAULT 0 COMMENT '文章数量',
                                `metaKeywords` varchar(256) CHARACTER SET utf8mb4 NULL DEFAULT NULL COMMENT 'SEO关键字',
                                `metaDescription` varchar(256) CHARACTER SET utf8mb4 NULL DEFAULT NULL COMMENT 'SEO描述内容',
+                               `thumbnail` varchar(256) CHARACTER SET utf8mb4 NULL DEFAULT NULL COMMENT '封面图',
                                `status` int(0) NOT NULL DEFAULT 0 COMMENT '状态0:正常,1禁用',
                                `createTime` datetime(0) NOT NULL COMMENT '创建时间',
                                `updateTime` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
@@ -74,6 +77,8 @@ CREATE TABLE `p_comment`  (
                               `website` varchar(256) CHARACTER SET utf8mb4 NULL DEFAULT NULL COMMENT '网站地址',
                               `email` varchar(256) CHARACTER SET utf8mb4 NOT NULL COMMENT '邮箱',
                               `userName` varchar(256) CHARACTER SET utf8mb4 NOT NULL COMMENT '评论人',
+                              `device` varchar(64) CHARACTER SET utf8mb4 NOT NULL COMMENT '设备类型',
+                              `ip` varchar(64) CHARACTER SET utf8mb4 NOT NULL COMMENT 'ip',
                               `createTime` datetime(0) NOT NULL COMMENT '创建时间',
                               `updateTime` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
                               PRIMARY KEY (`id`) USING BTREE
@@ -173,19 +178,18 @@ CREATE TABLE `p_plugin`  (
                        PRIMARY KEY (`id`) USING BTREE
 )ENGINE = InnoDB CHARACTER SET = utf8mb4 ROW_FORMAT = Dynamic;
 
-INSERT INTO `p_option`(`id`, `key`, `value`) VALUES (1, 'WEB_THEME', 'default');
-INSERT INTO `p_option`(`id`, `key`, `value`) VALUES (2, 'WEB_IS_REGISTER', '1');
-INSERT INTO `p_option`(`id`, `key`, `value`) VALUES (3, 'WEB_COMMENT_IS_REVIEW', '0');
+INSERT INTO `p_option`(`key`, `value`) VALUES ('WEB_THEME', 'default');
+INSERT INTO `p_option`(`key`, `value`) VALUES ('WEB_IS_REGISTER', '1');
+INSERT INTO `p_option`(`key`, `value`) VALUES ('WEB_COMMENT_IS_REVIEW', '0');
 
-INSERT INTO `p_role`(`id`, `name`, `description`, `code`, `createTime`, `updateTime`) VALUES (1, '管理员', '网站管理员', 'admin', '2020-12-17 13:11:31', NULL);
-INSERT INTO `p_role`(`id`, `name`, `description`, `code`, `createTime`, `updateTime`) VALUES (2, '用户', '网站用户', 'user', '2020-12-17 13:11:50', NULL);
+INSERT INTO `p_role`(`name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('管理员', '网站管理员', 'admin', now(), NULL);
+INSERT INTO `p_role`( `name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('普通用户', '网站用户', 'user', now(), NULL);
+INSERT INTO `p_role`(`name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('文章编辑', '文章编辑', 'editor', now(), NULL);
+INSERT INTO `p_role`(`name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('文章贡献', '文章贡献', 'contribute', now(), NULL);
 
-INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('47d098465f85488898428369b90dd0d3','-1', '归档', '/archive', 'fa-calendar', 1, 0, 0,0, '2020-11-27 08:06:10', '2020-12-14 03:26:37');
-INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('7484645890c546d0bba46b67a553452e','-1', '友链', '/page/link', 'fa-user-o', 2, 0, 0, 0, '2020-12-11 03:12:49', '2020-12-14 03:26:59');
+INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('47d098465f85488898428369b90dd0d3','-1', '归档', '/archive', 'fa-calendar', 1, 0, 0,0, now(), now());
+INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('7484645890c546d0bba46b67a553452e','-1', '友链', '/page/link', 'fa-user-o', 2, 0, 0, 0, now(), now());
 
-INSERT INTO `p_article`(`id`, `title`, `content`,`contentModel`, `type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `isTop`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`,`slug`, `createTime`, `updateTime`) VALUES (1, 'HelloWorld', '欢迎使用 Perfree，如果您看到这篇文章,表示Perfree 已经安装成功.', 'markdown','article', '', NULL, '', '', '', 0, 0, 0, 0, 1, 1, '1',now(), now());
-INSERT INTO `p_article`(`id`, `title`, `content`, `contentModel`,`type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `isTop`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`, `slug`, `createTime`, `updateTime`) VALUES (2, '友链', '友链', 'markdown','page', '', NULL, '', '', '', 0, 0, 1, 1, 1, 1, 'link',now(), now());
-INSERT INTO `p_role`(`id`, `name`, `description`, `code`, `createTime`, `updateTime`) VALUES (3, '文章编辑', '文章编辑', 'editor', '2021-09-15 13:59:43', NULL);
-INSERT INTO `p_role`(`id`, `name`, `description`, `code`, `createTime`, `updateTime`) VALUES (4, '文章贡献', '文章贡献', 'contribute', '2021-09-15 14:00:21', NULL);
-UPDATE `p_role` SET `name` = '普通用户', `description` = '网站用户', `code` = 'user', `createTime` = '2020-12-17 13:11:50', `updateTime` = NULL WHERE `id` = 2;
+INSERT INTO `p_article`(`id`, `title`, `content`,`contentModel`, `type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`,`slug`, `createTime`, `updateTime`) VALUES (1, 'HelloWorld', '欢迎使用 Perfree，如果您看到这篇文章,表示Perfree 已经安装成功.', 'markdown','article', '', NULL, '', '', '',  0, 0, 0, 1, 1, '1',now(), now());
+INSERT INTO `p_article`(`id`, `title`, `content`, `contentModel`,`type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`, `slug`, `createTime`, `updateTime`) VALUES (2, '友链', '友链', 'markdown','page', '', NULL, '', '', '',  0, 1, 1, 1, 1, 'link',now(), now());
 ALTER TABLE `p_article` ADD INDEX `slug`(`slug`), ADD INDEX `type`(`type`), ADD INDEX `categoryId`(`categoryId`), ADD INDEX `commentCount`(`commentCount`), ADD INDEX `viewCount`(`viewCount`);

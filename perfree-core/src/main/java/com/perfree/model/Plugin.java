@@ -3,13 +3,11 @@ package com.perfree.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
-import com.perfree.dataBase.DataTable;
-import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -21,46 +19,36 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_plugin")
 @ApiModel(value = "Plugin对象", description = "")
-@DataTable(value = "p_plugin")
 public class Plugin implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("插件名")
-    @DataTableField(name = "name", type = "varchar", length = 256)
     private String name;
 
     @ApiModelProperty("路径")
-    @DataTableField(name = "path", type = "varchar", length = 256)
     private String path;
 
     @ApiModelProperty("插件描述")
-    @DataTableField(name = "desc", type = "varchar", length = 512)
     private String desc;
 
     @ApiModelProperty("版本")
-    @DataTableField(name = "version", type = "varchar", length = 64)
     private String version;
 
     @ApiModelProperty("作者")
-    @DataTableField(name = "author", type = "varchar", length = 64)
     private String author;
 
     @ApiModelProperty("插件状态:0禁用,1启用")
-    @DataTableField(name = "status", type = "int", defaultValue = "0")
     private Integer status;
 
     @ApiModelProperty("创建时间")
-    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

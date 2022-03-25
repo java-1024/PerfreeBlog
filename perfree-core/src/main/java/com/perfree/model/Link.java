@@ -3,13 +3,11 @@ package com.perfree.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
-import com.perfree.dataBase.DataTable;
-import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -21,38 +19,30 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_link")
 @ApiModel(value = "Link对象", description = "")
-@DataTable(value = "p_link")
 public class Link implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("网站名")
-    @DataTableField(name = "name", length = 256, type = "varchar", isEmpty = false)
     private String name;
 
     @ApiModelProperty("网站logo")
-    @DataTableField(name = "logo", length = 256, type = "varchar")
     private String logo;
 
     @ApiModelProperty("网站描述")
-    @DataTableField(name = "desc", length = 512, type = "varchar")
     private String desc;
 
     @ApiModelProperty("网站地址")
-    @DataTableField(name = "address", length = 256, type = "varchar")
     private String address;
 
     @ApiModelProperty("创建时间")
-    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {

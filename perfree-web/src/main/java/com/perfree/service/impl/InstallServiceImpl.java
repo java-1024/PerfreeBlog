@@ -1,105 +1,99 @@
 package com.perfree.service.impl;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.dialect.Props;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.perfree.commons.DynamicDataSource;
 import com.perfree.commons.GravatarUtil;
-import com.perfree.commons.OptionUtils;
 import com.perfree.commons.StringUtil;
-import com.perfree.dataBase.DataBaseUtils;
-import com.perfree.dataBase.TableFieldModel;
-import com.perfree.dataBase.TableModel;
 import com.perfree.enums.OptionEnum;
 import com.perfree.enums.RoleEnum;
 import com.perfree.enums.SystemEnum;
-import com.perfree.form.InstallForm;
-import com.perfree.mapper.*;
+import com.perfree.enums.UserEnum;
+import com.perfree.form.InstallDataBaseForm;
+import com.perfree.form.InstallUserForm;
+import com.perfree.mapper.InstallMapper;
 import com.perfree.model.Option;
 import com.perfree.model.Role;
-import com.perfree.model.User;
-import com.perfree.service.*;
+import com.perfree.service.InstallService;
+import com.perfree.service.OptionService;
+import com.perfree.service.RoleService;
+import com.perfree.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.List;
 
 @Service
 public class InstallServiceImpl implements InstallService {
     private final static Logger LOGGER = LoggerFactory.getLogger(InstallServiceImpl.class);
 
+    @Value("${version}")
+    private String version;
+
     private final InstallMapper installMapper;
     private final OptionService optionService;
     private final UserService userService;
-    private final MenuService menuService;
     private final RoleService roleService;
-    private final ArticleService articleService;
-    private final CommentService commentService;
 
     public InstallServiceImpl(InstallMapper installMapper, OptionService optionService,
-                              UserService userService, MenuService menuService,RoleService roleService,
-                              ArticleService articleService, CommentService commentService) {
+                              UserService userService, RoleService roleService) {
         this.installMapper = installMapper;
         this.optionService = optionService;
         this.userService = userService;
-        this.menuService = menuService;
         this.roleService = roleService;
-        this.articleService = articleService;
-        this.commentService = commentService;
     }
 
     @Override
-    public void install(InstallForm installForm) throws Exception {
-        if (installForm.getDataBaseType().equals(SystemEnum.DB_TYPE_MYSQL.getValue())) {
-            initMysqlDataBase(installForm);
-            List<TableModel> tableModelList = queryMysqlTables();
-            DataBaseUtils.initOrUpdateMysqlDataBase(tableModelList);
-        } else if (installForm.getDataBaseType().equals(SystemEnum.DB_TYPE_SQLITE.getValue())) {
+    public void install(InstallDataBaseForm installDataBaseForm) throws Exception {
+        if (installDataBaseForm.getInstallType() == InstallDataBaseForm.INSTALL_SKIP) {
+            installDone();
+            return;
+        }
+        initData(installDataBaseForm);
+    }
+
+    @Override
+    public boolean checkDataBase(InstallDataBaseForm installDataBaseForm) throws Exception {
+        if (installDataBaseForm.getDataBaseType().equals(SystemEnum.DB_TYPE_MYSQL.getValue())) {
+            initMysqlDataBase(installDataBaseForm);
+            List<String> tables = installMapper.queryMysqlTables();
+            return tables.size() > 0;
+        } else if (installDataBaseForm.getDataBaseType().equals(SystemEnum.DB_TYPE_SQLITE.getValue())) {
             initSqliteDataBase();
-            List<TableModel> tableModelList = querySqliteTables();
-            DataBaseUtils.initOrUpdateSqliteDataBase(tableModelList);
+            List<String> tables = installMapper.querySqliteTables();
+            return tables.size() > 0;
         } else {
-            LOGGER.error("不支持的数据库类型:{}", installForm.getDataBaseType());
-            throw new Exception("不支持的数据库类型:" + installForm.getDataBaseType());
+            LOGGER.error("不支持的数据库类型:{}", installDataBaseForm.getDataBaseType());
+            throw new Exception("不支持的数据库类型:" + installDataBaseForm.getDataBaseType());
         }
-        installInitOperate(installForm);
     }
 
     @Override
-    @Transactional
-    public List<TableModel> queryMysqlTables() {
-        return installMapper.queryMysqlTables();
-    }
-
-    @Override
-    public List<TableModel> querySqliteTables() {
-        List<TableModel> tableModels = installMapper.querySqliteTables();
-        for (TableModel tableModel : tableModels) {
-            List<TableFieldModel> sqliteFieldList = installMapper.getSqliteFieldList(StrUtil.format("PRAGMA table_info(`{}`)",tableModel.getName()));
-            for (TableFieldModel tableFieldModel : sqliteFieldList) {
-                tableFieldModel.setAutoIncrement(tableFieldModel.isPrimary() && tableFieldModel.getType().equals("integer"));
-                tableFieldModel.setEmpty(!tableFieldModel.isEmpty());
-                tableFieldModel.setComment("");
-                tableFieldModel.setLength(0);
-            }
-            tableModel.setFieldList(sqliteFieldList);
-        }
-        return tableModels;
+    public void initUser(InstallUserForm installUserForm) {
+        Role role = roleService.getByCode(RoleEnum.ADMIN_ROLE.getCode());
+        installUserForm.setRoleId(role.getId());
+        installUserForm.setStatus((Integer) UserEnum.USER_STATUS_ENABLE.getValue());
+        installUserForm.setAvatar(GravatarUtil.getGravatar(installUserForm.getEmail()));
+        installUserForm.setSalt(StringUtil.getUUID());
+        installUserForm.setPassword(new Md5Hash(installUserForm.getPassword(), installUserForm.getSalt()).toString());
+        userService.save(installUserForm);
+        installDone();
     }
 
     /**
      * 初始化mysql数据库
      */
-    private void initMysqlDataBase(InstallForm installForm) throws Exception{
+    private void initMysqlDataBase(InstallDataBaseForm installForm) throws Exception{
         DruidDataSource druidDataSource = DynamicDataSource.getDataSource();
         if (druidDataSource.isInited()){
             druidDataSource.close();
@@ -121,8 +115,8 @@ public class InstallServiceImpl implements InstallService {
         setting.setProperty("username",installForm.getDataBaseUserName());
         setting.setProperty("password",installForm.getDataBasePassword());
         setting.setProperty("driverClassName","com.mysql.jdbc.Driver");
-        setting.setProperty("type","mysql");
-        setting.setProperty("installStatus","dbSuccess");
+        setting.setProperty("type",SystemEnum.DB_TYPE_MYSQL.getValue());
+        setting.setProperty("dataVersion", version);
         setting.store(file.getAbsolutePath());
     }
 
@@ -160,59 +154,60 @@ public class InstallServiceImpl implements InstallService {
         Props setting = new Props(FileUtil.touch(file), CharsetUtil.CHARSET_UTF_8);
         setting.setProperty("url",url);
         setting.setProperty("driverClassName","org.sqlite.JDBC");
-        setting.setProperty("type","sqlite");
-        setting.setProperty("installStatus","dbSuccess");
+        setting.setProperty("type", SystemEnum.DB_TYPE_SQLITE.getValue());
+        setting.setProperty("dataVersion", version);
         setting.store(file.getAbsolutePath());
     }
 
     /**
-     * 安装后的初始化操作
+     * 初始化数据
+     * @param installDataBaseForm installDataBaseForm
+     * @throws Exception e
      */
-    private void installInitOperate(InstallForm installForm) throws Exception {
-        Option option = optionService.getByKey(OptionEnum.IS_INSTALLED.getValue());
-        if (OptionUtils.valToBool(option)) {
-            initUser(installForm);
-            return;
+    private void initData(InstallDataBaseForm installDataBaseForm) throws Exception {
+        File sqlFile = new File(SystemEnum.MYSQL_PROD_SCRIPT.getValue());
+        if (!sqlFile.exists()){
+            sqlFile = FileUtil.file(SystemEnum.MYSQL_DEV_SCRIPT.getValue());
         }
-        initData(installForm);
-        // TODO optionService.initOptionCache();
-      /*  List<AdminMenuGroup> adminMenuGroups = MenuManager.initSystemMenu();
-        menuService.initSystemMenu(admnMenuGroups);
-        try{
-            List<Plugin> plugins = piluginService.getAll();
-            pluginManagerService.initPlugins(plugins);
+        if (installDataBaseForm.getDataBaseType().equals(SystemEnum.DB_TYPE_MYSQL.getValue())) {
+            initMysqlDataBase(installDataBaseForm);
+        } else if (installDataBaseForm.getDataBaseType().equals(SystemEnum.DB_TYPE_SQLITE.getValue())) {
+            initSqliteDataBase();
+            sqlFile = new File(SystemEnum.SQLITE_PROD_SCRIPT.getValue());
+            if (!sqlFile.exists()){
+                sqlFile = FileUtil.file(SystemEnum.SQLITE_DEV_SCRIPT.getValue());
+            }
+        } else {
+            LOGGER.error("不支持的数据库类型:{}", installDataBaseForm.getDataBaseType());
+            throw new Exception("不支持的数据库类型:" + installDataBaseForm.getDataBaseType());
+        }
+
+        try(Connection connection = DynamicDataSource.getDataSource().getConnection()){
+            FileReader fileReader = new FileReader(sqlFile);
+            String createSql = fileReader.readString();
+            String[] split = createSql.split(";");
+            for (int i = 0; i < split.length - 1; i++){
+                connection.prepareStatement(split[i]).execute();
+            }
         }catch (Exception e) {
             e.printStackTrace();
-        }*/
+            LOGGER.error("执行初始化数据库脚本失败:{}", e.getMessage());
+            throw new Exception("执行初始化数据库脚本失败:" + e.getMessage());
+        }
     }
 
-    private void initData(InstallForm installForm) {
-        Role adminRole = new Role(RoleEnum.ADMIN_ROLE.getName(),RoleEnum.ADMIN_ROLE.getDesc(), RoleEnum.ADMIN_ROLE.getCode());
-        Role userRole = new Role(RoleEnum.USER_ROLE.getName(), RoleEnum.USER_ROLE.getDesc(),RoleEnum.USER_ROLE.getCode());
-        Role editorRole = new Role(RoleEnum.EDITOR_ROLE.getName(),RoleEnum.EDITOR_ROLE.getDesc(),RoleEnum.EDITOR_ROLE.getCode());
-        Role contributeRole = new Role(RoleEnum.CONTRIBUTE_ROLE.getName(), RoleEnum.CONTRIBUTE_ROLE.getDesc(),RoleEnum.CONTRIBUTE_ROLE.getCode());
-        roleService.save(adminRole);
-        roleService.save(userRole);
-        roleService.save(editorRole);
-        roleService.save(contributeRole);
-
-        Option installOption = new Option(OptionEnum.IS_INSTALLED.getValue(), "true");
-        optionService.save(installOption);
-/*
-
-        Option themeOption = new Option("WEB_THEME", "default");
-        Option registerOption = new Option("WEB_IS_REGISTER", "1");
-        Option reviewOption = new Option("WEB_COMMENT_IS_REVIEW", "0");
-*/
-        initUser(installForm);
-    }
-
-    private void initUser(InstallForm installForm) {
-        Role role = roleService.getByCode(RoleEnum.ADMIN_ROLE.getCode());
-        installForm.setRoleId(role.getId());
-        installForm.setAvatar(GravatarUtil.getGravatar(installForm.getEmail()));
-        installForm.setSalt(StringUtil.getUUID());
-        installForm.setPassword(new Md5Hash(installForm.getPassword(), installForm.getSalt()).toString());
-        userService.save(installForm);
+    /**
+     * 安装完成执行的事件
+     */
+    private void installDone() {
+        File file = new File(SystemEnum.DB_SETTING_PATH.getValue());
+        Props setting = new Props(file, CharsetUtil.CHARSET_UTF_8);
+        setting.setProperty("installStatus", "dbSuccess");
+        setting.store(file.getAbsolutePath());
+        Option option = optionService.getByKey(OptionEnum.IS_INSTALLED.getValue());
+        if (option == null) {
+            optionService.save(new Option(OptionEnum.IS_INSTALLED.getValue(), "true"));
+        }
+        optionService.initOptionCache();
     }
 }

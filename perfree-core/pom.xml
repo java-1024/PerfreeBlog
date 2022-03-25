@@ -119,6 +119,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.dfabulich</groupId>
             <artifactId>sitemapgen4j</artifactId>
         </dependency>

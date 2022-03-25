@@ -3,13 +3,11 @@ package com.perfree.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
-import com.perfree.dataBase.DataTable;
-import com.perfree.dataBase.DataTableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -21,54 +19,42 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @TableName("p_category")
 @ApiModel(value = "Category对象", description = "分类表")
-@DataTable(value = "p_category")
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @DataTableField(name = "id", type = "int", isEmpty = false, isPrimary = true, autoIncrement = true)
     private Integer id;
 
     @ApiModelProperty("分类名")
-    @DataTableField(name = "name", length = 256, type = "varchar")
     private String name;
 
     @ApiModelProperty("父级id")
-    @DataTableField(name = "pid", type = "int")
     private Integer pid;
 
     @ApiModelProperty("描述")
-    @DataTableField(name = "desc", length = 512, type = "varchar")
     private String desc;
 
     @ApiModelProperty("文章数量")
-    @DataTableField(name = "count", type = "int", defaultValue = "0")
     private Integer count;
 
     @ApiModelProperty("SEO关键字")
-    @DataTableField(name = "metaKeywords", length = 256, type = "varchar")
     private String metaKeywords;
 
     @ApiModelProperty("SEO描述内容")
-    @DataTableField(name = "metaDescription", length = 512, type = "varchar")
     private String metaDescription;
 
     @ApiModelProperty("封面图")
-    @DataTableField(name = "thumbnail", length = 256, type = "varchar")
     private String thumbnail;
 
     @ApiModelProperty("状态0:正常,1禁用")
-    @DataTableField(name = "status", type = "int", defaultValue = "0")
     private Integer status;
 
     @ApiModelProperty("创建时间")
-    @DataTableField(name = "createTime", type = "datetime")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
-    @DataTableField(name = "updateTime", type = "datetime")
     private Date updateTime;
 
     public Integer getId() {
