@@ -1,7 +1,8 @@
 package com.perfree.enums;
 
 public enum OptionEnum {
-    IS_INSTALLED("是否已安装", "IS_INSTALLED");
+    IS_INSTALLED("是否已安装", "IS_INSTALLED"),
+    GRAVATAR_SOURCE("头像镜像源", "GRAVATAR_SOURCE");
     private String key;
 
     private String value;

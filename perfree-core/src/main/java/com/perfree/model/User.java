@@ -1,6 +1,7 @@
 package com.perfree.model;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.perfree.commons.GravatarUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -60,7 +61,21 @@ public class User implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    @ApiModelProperty("角色")
     private Role role;
+
+    @TableField(exist = false)
+    @ApiModelProperty("头像地址")
+    private String avatarUrl;
+
+    public String getAvatarUrl() {
+        this.avatarUrl = GravatarUtil.replaceGravatar(this.avatar);
+        return this.avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 
     public Integer getId() {
         return id;
@@ -110,6 +125,7 @@ public class User implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+        this.avatarUrl = GravatarUtil.replaceGravatar(avatar);
     }
     public Integer getRoleId() {
         return roleId;

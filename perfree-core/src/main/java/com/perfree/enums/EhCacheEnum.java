@@ -2,8 +2,8 @@ package com.perfree.enums;
 
 public enum EhCacheEnum {
 
-    EHCACHE_KEY_OPTION_DATA("数据字典缓存", "optionData");
-
+    EHCACHE_KEY_OPTION_DATA("数据字典缓存", "optionData"),
+    EHCACHE_KEY_LOGIN_CACHE("登录缓存", "loginCache");
     private String key;
 
     private String value;
