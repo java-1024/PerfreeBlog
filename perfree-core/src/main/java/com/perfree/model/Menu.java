@@ -1,11 +1,13 @@
 package com.perfree.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -48,11 +50,45 @@ public class Menu implements Serializable {
     @ApiModelProperty("菜单状态0:启用,1禁用")
     private Integer status;
 
+    @ApiModelProperty("插件id")
+    private String pluginId;
+
+    @ApiModelProperty("菜单标识:0:系统自带,1:用户创建,2:插件")
+    private Integer flag;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 
     @ApiModelProperty("更新时间")
     private Date updateTime;
+
+    @TableField(exist = false)
+    @ApiModelProperty("子菜单")
+    private List<Menu> childMenu;
+
+    public List<Menu> getChildMenu() {
+        return childMenu;
+    }
+
+    public void setChildMenu(List<Menu> childMenu) {
+        this.childMenu = childMenu;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
 
     public String getId() {
         return id;

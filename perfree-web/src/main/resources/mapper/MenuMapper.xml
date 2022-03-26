@@ -2,4 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.perfree.mapper.MenuMapper">
 
+    <!-- 定义菜单树形结构 -->
+    <resultMap id="MENU_LIST_TREE" type="com.perfree.model.Menu">
+        <result column="id" property="id"></result>
+        <result column="pid" property="pid"></result>
+        <result column="name" property="name"></result>
+        <result column="url" property="url"></result>
+        <result column="icon" property="icon"></result>
+        <result column="seq" property="seq"></result>
+        <result column="type" property="type"></result>
+        <result column="status" property="status"></result>
+        <result column="target" property="target"></result>
+        <result column="pluginId" property="pluginId"></result>
+        <result column="flag" property="flag"></result>
+        <result column="createTime" property="createTime"></result>
+        <result column="updateTime" property="updateTime"></result>
+        <collection property="childMenu" select="getChildMenuList" column="id"></collection>
+    </resultMap>
+
+    <select id="getChildMenuList" resultMap="MENU_LIST_TREE">
+        select * from p_menu where pid = #{id} and status = 0 order by seq
+    </select>
+
+    <select id="getMenusByType" resultMap="MENU_LIST_TREE">
+        select * from p_menu where status = 0 and type = #{type} and pid = '-1' order by seq
+    </select>
 </mapper>

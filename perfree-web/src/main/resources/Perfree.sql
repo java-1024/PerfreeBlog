@@ -124,6 +124,8 @@ CREATE TABLE `p_menu`  (
                            `type` int(0) NOT NULL DEFAULT 0 COMMENT '菜单类型0:前台,1:后台',
                            `target` int(0) NULL DEFAULT 0 COMMENT '菜单打开方式:0本页,1:新窗口',
                            `status` int(0) NOT NULL DEFAULT 0 COMMENT '菜单状态0:启用,1禁用',
+                           `pluginId` varchar(128) CHARACTER SET utf8mb4 NULL DEFAULT NULL COMMENT '插件id',
+                           `flag` int(0) NOT NULL DEFAULT 0 COMMENT '菜单标识:0:系统自带,1:用户创建,2:插件',
                            `createTime` datetime(0) NOT NULL COMMENT '创建时间',
                            `updateTime` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
                            PRIMARY KEY (`id`) USING BTREE
@@ -187,8 +189,15 @@ INSERT INTO `p_role`( `name`, `description`, `code`, `createTime`, `updateTime`)
 INSERT INTO `p_role`(`name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('文章编辑', '文章编辑', 'editor', now(), NULL);
 INSERT INTO `p_role`(`name`, `description`, `code`, `createTime`, `updateTime`) VALUES ('文章贡献', '文章贡献', 'contribute', now(), NULL);
 
-INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('47d098465f85488898428369b90dd0d3','-1', '归档', '/archive', 'fa-calendar', 1, 0, 0,0, now(), now());
-INSERT INTO `p_menu`(`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `createTime`, `updateTime`) VALUES ('7484645890c546d0bba46b67a553452e','-1', '友链', '/page/link', 'fa-user-o', 2, 0, 0, 0, now(), now());
+
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000001', '-1', '控制台', '/dashboard', 'dashboard', 1, 1, 0, 0, NULL, 0, now());
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000002', '-1', '写文章', '/article/create', 'edit', 2, 1, 0, 0, NULL, 0, now());
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000003', '-1', '内容管理', NULL, 'read', 3, 1, 0, 0, NULL, 0, now());
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000004', '00000000000000000000000000000003', '文章管理', '/article', NULL, 1, 1, 0, 0, NULL, 0, now());
+
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000011', '-1', '归档', '/archive', 'fa-calendar', 1, 0, 0, 0, NULL, 0,  now());
+INSERT INTO `p_menu` (`id`, `pid`, `name`, `url`, `icon`, `seq`, `type`, `target`, `status`, `pluginId`, `flag`, `createTime`) VALUES ('00000000000000000000000000000012', '-1', '友链', '/page/link', 'fa-user-o', 2, 0, 0, 0, NULL, 0,  now());
+
 
 INSERT INTO `p_article`(`id`, `title`, `content`,`contentModel`, `type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`,`slug`, `createTime`, `updateTime`) VALUES (1, 'HelloWorld', '欢迎使用 Perfree，如果您看到这篇文章,表示Perfree 已经安装成功.', 'markdown','article', '', NULL, '', '', '',  0, 0, 0, 1, 1, '1',now(), now());
 INSERT INTO `p_article`(`id`, `title`, `content`, `contentModel`,`type`, `summary`, `categoryId`, `metaKeywords`, `metaDescription`, `thumbnail`, `status`, `commentCount`, `viewCount`, `userId`, `isComment`, `slug`, `createTime`, `updateTime`) VALUES (2, '友链', '友链', 'markdown','page', '', NULL, '', '', '',  0, 1, 1, 1, 1, 'link',now(), now());
