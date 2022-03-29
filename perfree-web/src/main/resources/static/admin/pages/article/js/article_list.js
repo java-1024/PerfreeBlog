@@ -1,10 +1,10 @@
-let table, form, $,toast,roleCode, utils;
-layui.use(['table', 'layer', 'form', 'jquery', 'toast','utils'], function () {
-    table = layui.table;
+var tableIns, form, $,toast,roleCode, utils,table;
+layui.use([ 'layer', 'form', 'jquery', 'toast','utils', 'table'], function () {
     form = layui.form;
     $ = layui.jquery;
     toast = layui.toast;
     utils = layui.utils;
+    table = layui.table;
     roleCode = $("#roleCode").val();
     initPage();
 });
@@ -33,7 +33,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -50,14 +50,10 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/article/list',
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '文章列表',
-        totalRow: false,
         where: {
             form: {
                 title: $("#title").val(),
@@ -65,7 +61,6 @@ function queryTable() {
                 categoryId: $("#category").val()
             }
         },
-        limit: 20,
         cols: [[
             {type: 'checkbox'},
             {field: 'id', title: 'ID', width: 60},
@@ -79,15 +74,9 @@ function queryTable() {
             {
                 field: 'status', minWidth: 100, title: '状态', templet: function (d) {
                     let html = '<span>';
-                    if (d.status === 0) {
-                        html += "已发布";
-                    }
-                    if (d.status === 1) {
-                        html += "草稿";
-                    }
-                    if (d.status === 2) {
-                        html += "待审核";
-                    }
+                    if (d.status === 0) { html += "已发布"; }
+                    if (d.status === 1) { html += "草稿"; }
+                    if (d.status === 2) { html += "待审核"; }
                     html += '</div>';
                     return html;
                 }
@@ -164,20 +153,6 @@ function queryTable() {
                 }
             },
         ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
     });
 
     form.on('switch(isTop)', function (data) {
@@ -207,21 +182,17 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/article/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
+                    tableIns.reload();
                     toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
                     toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                toast.error({message: '删除失败',position: 'topCenter'});
             }
         });
         layer.close(index);
@@ -232,21 +203,17 @@ function deleteData(ids) {
  * 更改置顶状态
  */
 function changeTopStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/changeTopStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, isTop: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
+                tableIns.reload();
                 toast.success({message: '修改成功',position: 'topCenter'});
             } else {
                 toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            toast.error({message: '修改状态失败',position: 'topCenter'});
         }
     });
 }
@@ -261,7 +228,7 @@ function changeCommentStatus(id, status) {
         data: JSON.stringify({id: id, isComment: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
+                tableIns.reload();
                 toast.success({message: '修改成功',position: 'topCenter'});
             } else {
                 toast.error({message: data.msg,position: 'topCenter'});
@@ -282,7 +249,7 @@ function changeStatus(id, status) {
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
+                tableIns.reload();
                 toast.success({message: '修改成功',position: 'topCenter'});
             } else {
                 toast.error({message: data.msg,position: 'topCenter'});

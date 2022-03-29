@@ -1,8 +1,10 @@
-let form, xmSelect,categorySelect,tagSelect,loadIndex;
-layui.use(['layer', 'form', 'xmSelect'], function () {
+let form, xmSelect,categorySelect,tagSelect,loadIndex, utils, toast, layer;
+layui.use(['layer', 'form', 'xmSelect', 'utils', 'toast'], function () {
     layer = layui.layer;
     form = layui.form;
     xmSelect = layui.xmSelect;
+    utils = layui.utils;
+    toast = layui.toast;
     layer.config({
         offset: '20%'
     });
@@ -60,22 +62,17 @@ function submitArticle(data) {
     data.articleTags = tagArr;
     data.isComment = data.isComment === 'on' ? 1 : 0
     data.isTop = data.isTop === 'on' ? 1 : 0
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/add",
-        contentType: "application/json",
         data: JSON.stringify(data),
         success: function (d) {
             if (d.code === 200) {
-                location.reload();
-                parent.layer.msg("文章发表成功", {icon: 1})
+                toast.success({message: '文章发表成功',position: 'topCenter'});
                 parent.toPage('/admin/article');
             } else {
-                layer.msg(d.msg, {icon: 2});
+                toast.error({message: d.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("文章发表失败", {icon: 2});
         }
     });
 }
@@ -84,53 +81,52 @@ function submitArticle(data) {
  * 初始化标签选择框
  */
 function initTag() {
-    $.get("/admin/tag/allList", function (res) {
-        if (res.code === 200) {
-            let tagArr = [];
-            res.data.forEach(r => {
-                const param = {name: r.name, value: r.id, id: r.id};
-                tagArr.push(param);
-            })
-            tagSelect = xmSelect.render({
-                el: '#tag',
-                tips: '请选择标签',
-                theme: {
-                    color: '#1E9FFF',
-                },
-                searchTips: '搜索标签或输入标签名新增',
-                filterable: true,
-                create: function (val, arr) {
-                    //返回一个创建成功的对象, val是搜索的数据, arr是搜索后的当前页面数据
-                    return {
-                        name: val,
-                        value: val
-                    }
-                },
-                data: tagArr,
-                on: function (data) {
-                    if (data.isAdd && data.change[0].id === null || data.isAdd && data.change[0].id === undefined) {
-                        $.ajax({
-                            type: "POST",
-                            url: "/admin/tag/add",
-                            contentType: "application/json",
-                            data: JSON.stringify({name: data.change[0].value}),
-                            success: function (d) {
-                                if (d.code === 200) {
-                                    const currentProfileIndex = (data.arr || []).findIndex((profile) => profile.value === d.data.name);
-                                    data.arr[currentProfileIndex].id = d.data.id;
-                                } else {
-                                    layer.msg("新建标签失败", {icon: 2});
+    utils.ajax({
+        type: "GET",
+        url: "/admin/tag/allList",
+        success: function (res) {
+            if (res.code === 200) {
+                let tagArr = [];
+                res.data.forEach(r => {
+                    const param = {name: r.name, value: r.id, id: r.id};
+                    tagArr.push(param);
+                })
+                tagSelect = xmSelect.render({
+                    el: '#tag',
+                    tips: '请选择标签',
+                    theme: {
+                        color: '#1E9FFF',
+                    },
+                    searchTips: '搜索标签或输入标签名新增',
+                    filterable: true,
+                    create: function (val, arr) {
+                        return {
+                            name: val,
+                            value: val
+                        }
+                    },
+                    data: tagArr,
+                    on: function (data) {
+                        if (data.isAdd && data.change[0].id === null || data.isAdd && data.change[0].id === undefined) {
+                            utils.ajax({
+                                type: "POST",
+                                url: "/admin/tag/add",
+                                data: JSON.stringify({name: data.change[0].value}),
+                                success: function (d) {
+                                    if (d.code === 200) {
+                                        const currentProfileIndex = (data.arr || []).findIndex((profile) => profile.value === d.data.name);
+                                        data.arr[currentProfileIndex].id = d.data.id;
+                                    } else {
+                                        toast.error({message: "新建标签失败",position: 'topCenter'});
+                                    }
                                 }
-                            },
-                            error: function (data) {
-                                layer.msg("新建标签失败", {icon: 2});
-                            }
-                        });
+                            });
+                        }
                     }
-                }
-            });
-        } else {
-            layer.msg(res.msg, {icon: 2});
+                });
+            } else {
+                toast.error({message: res.msg,position: 'topCenter'});
+            }
         }
     });
 }
@@ -139,31 +135,35 @@ function initTag() {
  * 初始化分类选择框
  */
 function initCategory() {
-    $.get("/admin/category/allList", function (res) {
-        if (res.code === 200) {
-            categorySelect = xmSelect.render({
-                el: '#category',
-                theme: {
-                    color: '#1E9FFF',
-                },
-                model: {label: {type: 'text'}},
-                radio: true,
-                tips: '请选择分类',
-                filterable: true,
-                searchTips: '输入分类名搜索',
-                clickClose: true,
-                tree: {
-                    show: true,
-                    strict: false,
-                    expandedKeys: [-1],
-                },
-                height: 'auto',
-                data() {
-                    return res.data
-                }
-            });
-        } else {
-            layer.msg(res.msg, {icon: 2});
+    utils.ajax({
+        type: "GET",
+        url: "/admin/category/allList",
+        success: function (res) {
+            if (res.code === 200) {
+                categorySelect = xmSelect.render({
+                    el: '#category',
+                    theme: {
+                        color: '#1E9FFF',
+                    },
+                    model: {label: {type: 'text'}},
+                    radio: true,
+                    tips: '请选择分类',
+                    filterable: true,
+                    searchTips: '输入分类名搜索',
+                    clickClose: true,
+                    tree: {
+                        show: true,
+                        strict: false,
+                        expandedKeys: [-1],
+                    },
+                    height: 'auto',
+                    data() {
+                        return res.data
+                    }
+                });
+            } else {
+                toast.error({message: res.msg,position: 'topCenter'});
+            }
         }
     });
 }

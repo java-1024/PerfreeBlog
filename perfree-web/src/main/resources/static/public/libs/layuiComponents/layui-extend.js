@@ -13,5 +13,5 @@ layui.config({
     loading: "loading/loading",
     count: "count",
     step: "step",
-    ajax: 'ajax'
+    utils: 'utils'
 });

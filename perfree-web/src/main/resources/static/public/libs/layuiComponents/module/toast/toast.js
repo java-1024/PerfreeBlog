@@ -5,7 +5,7 @@
 		module.exports = factory(root);
 	} else if (window.layui && layui.define) {
 		layui.define(function(exports){
-            exports('toast',factory(root))
+            exports('toast', window.top.toast === undefined ? factory(root) : window.top.toast)
 		})
 	}else {
 		root.iziToast = factory(root);

@@ -1,9 +1,10 @@
-var element, layer, laytpl;
+var element, layer, laytpl, toast;
 $(function () {
-    layui.use(['element', 'layer', 'laytpl'], function () {
+    layui.use(['element', 'layer', 'laytpl', 'toast'], function () {
         element = layui.element;
         layer = layui.layer;
         laytpl = layui.laytpl;
+        toast = layui.toast;
         initEvent();
         setIframeHeight();
 

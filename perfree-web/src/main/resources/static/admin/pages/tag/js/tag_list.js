@@ -1,6 +1,6 @@
-let table;
-layui.use('table', function () {
-    table = layui.table;
+var utils, tableIns ;
+layui.use(['utils'], function () {
+    utils = layui.utils;
     initPage();
 });
 
@@ -52,20 +52,17 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/tag/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '标签列表',
-        totalRow: false,
+        curr: 1,
         where: {
             form: {
                 name: $("#tagName").val()
             }
         },
-        limit: 30,
         cols: [[
             {type: 'checkbox'},
             {field: 'id', title: 'ID', width: 80, sort: true},
@@ -93,20 +90,6 @@ function queryTable() {
                     "</div>"
             },
         ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
     });
 }
 
@@ -138,7 +121,7 @@ function deleteData(ids) {
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
+                    tableIns.reload();
                     layer.msg(data.msg, {icon: 1});
                 } else {
                     layer.msg(data.msg, {icon: 2});

@@ -57,7 +57,7 @@
                 data: JSON.stringify(data.field),
                 success: function (data) {
                     if (data.code === 200) {
-                        parent.queryTable();
+                        parent.tableIns.reload();
                         parent.layer.msg("更新成功", {icon: 1});
                         const index = parent.layer.getFrameIndex(window.name);
                         parent.layer.close(index);
