@@ -1,9 +1,4 @@
 let form, xmSelect, element,categorySelect,tagSelect;
-layui.config({
-    base: '/static/public/libs/layuiComponents/'
-}).extend({
-    xmSelect: 'xm-select/xm-select'
-})
 layui.use(['layer', 'form', 'xmSelect', 'element'], function () {
     element = layui.element;
     form = layui.form;

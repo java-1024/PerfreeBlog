@@ -1,23 +1,76 @@
-.layui-btn{
-    height: 30px;
-    line-height: 30px;
-    padding: 0 10px;
-    background-color: #4b9fff;
-    color: white;
+/** --------layUi-------- */
+html{
+    --primary-color: #40a9ff;
+    --danger-color: #ff4d4f;
+    --default-background-color: white;
+    --default-grey-background-color: #FAFAFA;
+    --font-color: #000000d9;
+    --font-white-color: white;
+    --default-border-color: #d2d2d2;
+    overflow: auto;
 }
+body{line-height: 1; color: var(--font-color); font: 14px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";}
+.layui-layout-admin .layui-logo{color: var(--primary-color);}
+.layui-bg-green{background-color: var(--primary-color)!important; color: var(--font-white-color)!important;}
+.layui-border-green{border-width: 1px; border-style: solid; border-color: var(--primary-color)!important; color: var(--primary-color)!important;}
+.layui-font-green{color: var(--primary-color)!important;}
+.layui-btn{height: 30px; line-height: 30px;padding: 0 10px; background-color: var(--primary-color); color: var(--font-white-color); border-radius: 2px;}
+.layui-btn-primary:hover{border-color: var(--primary-color); color: #333;}
+.layui-btn-group .layui-btn-primary:hover{border-color: var(--default-border-color); color: var(--primary-color);}
+.layui-laypage a:hover{color: var(--primary-color);}
+.layui-laypage .layui-laypage-curr .layui-laypage-em{background-color: var(--primary-color); }
+.layui-laypage select:focus{border-color: var(--primary-color)!important;}
+.layui-upload-drag .layui-icon{font-size: 50px; color: var(--primary-color);}
+.layui-upload-drag[lay-over]{border-color: var(--primary-color)}
+.layui-nav-tree .layui-this,
+.layui-nav-tree .layui-this>a,
+.layui-nav-tree .layui-this>a:hover,
+.layui-nav-tree .layui-nav-child dd.layui-this,
+.layui-nav-tree .layui-nav-child dd.layui-this a{background-color: var(--primary-color); color: var(--font-white-color);}
+.layui-nav-tree .layui-nav-bar{background-color: var(--primary-color);}
+.layui-tab-brief > .layui-tab-title .layui-this{color: var(--primary-color);}
+.layui-slider-input-btn i:hover{color: var(--primary-color);}
+
+.layui-elem-quote{ border-left: 5px solid var(--primary-color); background-color: #FAFAFA;}
+.layui-progress-bar{background-color: var(--primary-color); }
+.layui-btn-checked{background-color: var(--primary-color);}
+.layui-form-select dl dd.layui-this{background-color: var(--primary-color); color: #fff;}
+.layui-form-checked, .layui-form-checked:hover{border-color: var(--primary-color);}
+.layui-form-checked span, .layui-form-checked:hover span{background-color: var(--primary-color);}
+.layui-form-checked i, .layui-form-checked:hover i{color: var(--primary-color);}
+.layui-form-checkbox[lay-skin="primary"]:hover i{border-color: var(--primary-color); color: #fff;}
+.layui-form-checked[lay-skin="primary"] i{border-color: var(--primary-color) !important; background-color: var(--primary-color); color: #fff;}
+.layui-form-onswitch{border-color: var(--primary-color); background-color: var(--primary-color);}
+.layui-form-radio:hover *{color: var(--primary-color);}
+.layui-table-edit:focus{border-color: var(--primary-color)!important;}
+.layui-menu .layui-menu-item-checked2{background-color: #F6F6F6!important; color: var(--primary-color);}
+.layui-menu .layui-menu-item-checked2 a{color: var(--primary-color);}
+.layui-menu .layui-menu-item-checked:after{border-right: 3px solid var(--primary-color);}
+.layui-menu-lg .layui-menu-body-title a:hover{background: none; color: var(--primary-color);}
+.layui-nav .layui-this:after{background-color: var(--primary-color); }
+.layui-breadcrumb a:hover{color: var(--primary-color) !important;}
+.layui-tab-brief > .layui-tab-title .layui-this:after ,.layui-tab-brief > .layui-tab-more li.layui-this:after{border-bottom: 2px solid var(--primary-color);}
+.layui-tab-card > .layui-tab-more .layui-this{background: none; color: var(--primary-color);}
+.layui-timeline-axis{background-color: #fff; color: var(--primary-color); }
+.layui-transfer-active .layui-btn{background-color: var(--primary-color); border-color: var(--primary-color); color: #fff;}
+.layui-bg-blue{background-color: var(--primary-color)!important; color: #fff!important;}
+.layui-border-blue{border-width: 1px; border-style: solid; border-color: var(--primary-color)!important; color: var(--primary-color)!important;}
+.layui-btn-normal{background-color: var(--primary-color);}
+.layui-form-selected dl{box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d;}
+.layui-layer-msg{box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d!important;border: none!important;}
+.layui-nav-child{box-shadow: 0 3px 6px -4px #0000001f,0 6px 16px #00000014,0 9px 28px 8px #0000000d!important;}
 .layui-btn-primary{
-    background-color: inherit;
+    border-color: #d2d2d2;
+    background: none;
     color: #666;
 }
+
 .layui-btn-danger{
     background-color: #FF5722;
 }
 .layui-form-label {
     padding: 5px 15px;
     width: auto;
-}
-html{
-    overflow: auto;
 }
 .layui-layout-body::-webkit-scrollbar {
     width: 6px;
@@ -60,55 +113,40 @@ html{
 }
 .p-container{
     padding: 6px;
-    background: whitesmoke;
+    background: #f6f9f8;
     min-height: calc(100% - 12px);
 }
 .layui-table tbody tr:hover, .layui-table thead tr, .layui-table-click, .layui-table-header, .layui-table-hover, .layui-table-mend, .layui-table-patch, .layui-table-tool, .layui-table-total, .layui-table-total tr, .layui-table[lay-even] tr:nth-child(even) {
     background-color: #eff2f5;
 }
-.layui-laypage .layui-laypage-curr .layui-laypage-em {
-    background-color: #4a9fff;
-}
-.layui-laypage a:hover {
-    color: #4a9fff;
-}
-.layui-laypage input:focus, .layui-laypage select:focus {
-    border-color: #4a9fff!important;
-}
 #queryBtn,#addBtn,#uploadBtn,.addBtn {
-    background-color: #4a9fff;
+    background-color: var(--primary-color);
 }
 #batchDeleteBtn{
     background-color: #FF5722;
 }
 .layui-form-radio:hover *, .layui-form-radioed, .layui-form-radioed>i{
-    color: #4a9fff;
+    color: var(--primary-color);
 }
 .layui-form-onswitch {
-    border-color: #4a9fff;
-    background-color: #4a9fff;
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
 }
 .layui-tab-brief>.layui-tab-title .layui-this {
-    color: #4a9fff;
-}
-.layui-form-select dl dd.layui-this {
-    background-color: #4a9fff;
-}
-.layui-btn-primary:hover {
-    border-color: #4a9fff;
+    color: var(--primary-color);
 }
 .layui-form-checked[lay-skin=primary] i {
-    border-color: #4a9fff!important;
-    background-color: #4a9fff;
+    border-color: var(--primary-color)!important;
+    background-color: var(--primary-color);
 }
 .layui-form-checked, .layui-form-checked:hover{
-    border-color: #4a9fff!important;
+    border-color: var(--primary-color)!important;
 }
 .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
-    border-bottom: 2px solid #4a9fff;
+    border-bottom: 2px solid var(--primary-color);
 }
 .layui-form-radio>i:hover, .layui-form-radioed>i {
-    color: #4a9fff;
+    color: var(--primary-color);
 }
 .p-add-panel form{
     position: absolute;
@@ -227,7 +265,7 @@ html{
 .tagBtn{
     margin-right: 5px;
     display: inline-block;
-    background: #5fb878;
+    background: var(--primary-color);
     color: white;
     padding-left: 3px;
     padding-right: 3px;
@@ -235,7 +273,7 @@ html{
     font-size: 13px;
 }
 .tagBtn:hover{
-    background: #5fb878;
+    background: var(--primary-color);
     color: white;
 }
 .articleHref{
@@ -260,3 +298,12 @@ html{
     border: 1px solid #ddd;
     display: inline-block;
 }
+
+
+
+
+
+
+
+
+

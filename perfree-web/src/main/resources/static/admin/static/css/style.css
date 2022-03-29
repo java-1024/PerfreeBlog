@@ -237,10 +237,6 @@ html,body{
     position: relative;
     padding: 4px 0;
 }
-.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
-    background-color: #4c9fff;
-    color:inherit;
-}
 .f-nav .layui-nav-child{
     top: 50px;
 }

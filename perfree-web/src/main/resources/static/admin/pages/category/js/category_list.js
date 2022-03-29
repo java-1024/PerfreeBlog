@@ -1,10 +1,5 @@
 let table, treeTable, layPage, form;
 let pageIndex = 1, pageSize = 20;
-layui.config({
-    base: '/static/public/libs/layuiComponents/'
-}).extend({
-    treeTable: 'treetable-lay/treeTable'
-})
 layui.use(['table', 'treeTable', 'laypage', 'form'], function () {
     table = layui.table;
     treeTable = layui.treeTable;

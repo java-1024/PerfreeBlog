@@ -4,8 +4,6 @@ $(function () {
         element = layui.element;
         layer = layui.layer;
         laytpl = layui.laytpl;
-        let flow = layui.flow;
-        flow.lazyimg();
         initEvent();
         setIframeHeight();
 
@@ -42,6 +40,7 @@ function initEvent() {
     // 刷新iframe
     $(".f-refresh-btn").click(function () {
         const iframe = $('.f-tab-content>.layui-show>iframe');
+        $("#frame-loading").show();
         $(iframe).attr('src', $(iframe).attr('src'));
         setIframeHeight();
     });

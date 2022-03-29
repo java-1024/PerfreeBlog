@@ -1,8 +1,11 @@
-let table, form;
-let roleCode = $("#roleCode").val();
-layui.use(['table', 'layer', 'form'], function () {
+let table, form, $,toast,roleCode, utils;
+layui.use(['table', 'layer', 'form', 'jquery', 'toast','utils'], function () {
     table = layui.table;
     form = layui.form;
+    $ = layui.jquery;
+    toast = layui.toast;
+    utils = layui.utils;
+    roleCode = $("#roleCode").val();
     initPage();
 });
 
@@ -212,13 +215,13 @@ function deleteData(ids) {
             success: function (data) {
                 if (data.code === 200) {
                     queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("删除失败", {icon: 2});
+                toast.error({message: '删除失败',position: 'topCenter'});
             }
         });
         layer.close(index);
@@ -237,13 +240,13 @@ function changeTopStatus(id, status) {
         success: function (data) {
             if (data.code === 200) {
                 queryTable();
-                layer.msg(data.msg, {icon: 1});
+                toast.success({message: '修改成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
         },
         error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
+            toast.error({message: '修改状态失败',position: 'topCenter'});
         }
     });
 }
@@ -252,23 +255,19 @@ function changeTopStatus(id, status) {
  * 更改是否可以评论
  */
 function changeCommentStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/changeCommentStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, isComment: status}),
         success: function (data) {
             if (data.code === 200) {
                 queryTable();
-                layer.msg(data.msg, {icon: 1});
+                toast.success({message: '修改成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
         }
-    });
+    })
 }
 
 /**
@@ -277,21 +276,17 @@ function changeCommentStatus(id, status) {
  * @param status
  */
 function changeStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/changeStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
                 queryTable();
-                layer.msg(data.msg, {icon: 1});
+                toast.success({message: '修改成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
         }
-    });
+    })
 }
