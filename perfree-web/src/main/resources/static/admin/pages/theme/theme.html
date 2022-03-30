@@ -68,14 +68,17 @@
 <script src="/static/public/js/laysize.js"></script>
 <script src="/static/public/libs/layui-v2.5.6/layui/layui.js"></script>
 <script src="/static/public/js/common.js?v=#(version)"></script>
+<script src="/static/public/libs/layuiComponents/layui-extend.js"></script>
 <script>
-    let layer, upload, laytpl, flow;
+    let layer, upload, laytpl, flow,utils,toast;
     let loadIndex;
-    layui.use(['upload', 'layer', 'laytpl', 'flow'], function () {
+    layui.use(['upload', 'layer', 'laytpl', 'flow','utils', 'toast'], function () {
         layer = layui.layer;
         upload = layui.upload;
         laytpl = layui.laytpl;
         flow = layui.flow;
+        toast = layui.toast;
+        utils = layui.utils;
         initThemeList();
 
         upload.render({
@@ -90,15 +93,15 @@
             done: function (res) {
                 layer.close(loadIndex);
                 if (res.code === 200) {
-                    parent.layer.msg("主题安装成功", {icon: 1});
+                    toast.success({message: "主题安装成功",position: 'topCenter'});
                     initThemeList();
                 } else {
-                    layer.msg(res.msg, {icon: 2});
+                    toast.error({message: res.msg,position: 'topCenter'});
                 }
             },
             error: function () {
                 layer.close(loadIndex);
-                layer.msg("主题安装失败", {icon: 2});
+                toast.error({message: "主题安装失败",position: 'topCenter'});
             }
         });
 
@@ -125,7 +128,7 @@
      */
     function initThemeList() {
         loadIndex = layer.load();
-        $.ajax({
+        utils.ajax({
             type: "GET",
             url: "/admin/theme/themeList",
             success: function (d) {
@@ -138,12 +141,12 @@
                         elem: '.p-theme-container img'
                     });
                 } else {
-                    layer.msg("加载主题列表失败", {icon: 2});
+                    toast.error({message: "加载主题列表失败",position: 'topCenter'});
                 }
             },
             error: function (data) {
                 layer.close(loadIndex);
-                layer.msg("加载主题列表失败", {icon: 2});
+                toast.error({message: "加载主题列表失败",position: 'topCenter'});
             }
         });
     }
@@ -151,23 +154,22 @@
     $(".p-theme-container").on("click", ".switchThemeBtn", function () {
         const path = $(this).attr("data-path");
         loadIndex = layer.load();
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/theme/switch",
-            contentType: "application/json",
             data: JSON.stringify({path: path}),
             success: function (d) {
                 layer.close(loadIndex);
                 if (d.code === 200) {
-                    parent.layer.msg("切换主题成功", {icon: 1});
+                    toast.success({message: "切换主题成功",position: 'topCenter'});
                     initThemeList();
                 } else {
-                    layer.msg("切换主题失败", {icon: 2});
+                    toast.error({message: "切换主题失败",position: 'topCenter'});
                 }
             },
             error: function (data) {
                 layer.close(loadIndex);
-                layer.msg("切换主题失败", {icon: 2});
+                toast.error({message: "切换主题失败",position: 'topCenter'});
             }
         });
     });
@@ -176,24 +178,23 @@
         const path = $(this).attr("data-path");
         loadIndex = layer.load();
         layer.confirm('卸载将直接删除主题,确定要卸载吗?', {icon: 3, title: '提示'}, function (index) {
-            $.ajax({
+            utils.ajax({
                 type: "POST",
                 url: "/admin/theme/del",
-                contentType: "application/json",
                 data: JSON.stringify({path: path}),
                 success: function (d) {
                     layer.close(loadIndex);
                     if (d.code === 200) {
-                        parent.layer.msg("卸载主题成功", {icon: 1});
+                        toast.success({message: "卸载主题成功",position: 'topCenter'});
                         initThemeList();
                     } else {
-                        layer.msg("卸载主题失败", {icon: 2});
+                        toast.error({message: "卸载主题失败",position: 'topCenter'});
                     }
                     layer.close(index);
                 },
                 error: function (data) {
                     layer.close(loadIndex);
-                    layer.msg("卸载主题失败", {icon: 2});
+                    toast.error({message: "卸载主题失败",position: 'topCenter'});
                     layer.close(index);
                 }
             });

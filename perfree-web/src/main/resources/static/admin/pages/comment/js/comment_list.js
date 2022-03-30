@@ -1,5 +1,8 @@
-let table;
-layui.use('table', function () {
+let utils, toast, layer, tableIns,table;
+layui.use(['toast','utils','layer','table'], function () {
+    utils = layui.utils;
+    toast = layui.toast;
+    layer = layui.layer;
     table = layui.table;
     initPage();
 });
@@ -10,10 +13,6 @@ layui.use('table', function () {
 function initPage() {
     queryTable();
 
-    layer.config({
-        offset: '20%'
-    });
-
     // 查询
     $("#queryBtn").click(function () {
         queryTable();
@@ -23,7 +22,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -40,20 +39,16 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/comment/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '评论列表',
-        totalRow: false,
         where: {
             form: {
                 content: $("#content").val()
             }
         },
-        limit: 30,
         cols: [[
             {type: 'checkbox'},
             {field: 'id', title: 'ID', width: 80, sort: true},
@@ -86,21 +81,7 @@ function queryTable() {
                     return html;
                 }
             },
-        ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
+        ]]
     });
 }
 
@@ -110,21 +91,17 @@ function queryTable() {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/comment/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("删除失败", {icon: 2});
             }
         });
         layer.close(index);
@@ -137,21 +114,17 @@ function deleteData(ids) {
  * @param status
  */
 function changeStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/comment/changeStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg(data.msg, {icon: 1});
+                tableIns.reload();
+                toast.success({message: '操作成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("操作失败", {icon: 2});
         }
     });
 }

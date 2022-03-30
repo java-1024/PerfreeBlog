@@ -1,13 +1,15 @@
-let form, element, layer, upload, flow;
+let form, element, layer, upload, flow,utils,toast;
 initPage();
 
 function initPage() {
-    layui.use(['layer', 'form', 'element','upload', 'flow'], function () {
+    layui.use(['layer', 'form', 'element','upload', 'flow','utils', 'toast'], function () {
         form = layui.form;
         element = layui.element;
         layer = layui.layer;
         upload = layui.upload;
         flow = layui.flow;
+        toast = layui.toast;
+        utils = layui.utils;
         flow.lazyimg();
         formEvent();
         initEvent();
@@ -24,20 +26,19 @@ function formEvent() {
     form.verify({});
     // 表单提交
     form.on('submit(editForm)', function (data) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/user/update",
-            contentType: "application/json",
             data: JSON.stringify(data.field),
             success: function (data) {
                 if (data.code === 200) {
-                    layer.msg("修改成功", {icon: 1});
+                    toast.success({message: '修改成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("修改失败", {icon: 2});
+                toast.error({message: "修改失败",position: 'topCenter'});
             }
         });
         return false;
@@ -45,20 +46,19 @@ function formEvent() {
 
 
     form.on('submit(passwordForm)', function (data) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/user/updatePassword",
-            contentType: "application/json",
             data: JSON.stringify(data.field),
             success: function (data) {
                 if (data.code === 200) {
-                    layer.msg("修改成功", {icon: 1});
+                    toast.success({message: '修改成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("修改失败", {icon: 2});
+                toast.error({message: "修改失败",position: 'topCenter'});
             }
         });
         return false;

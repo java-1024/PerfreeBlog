@@ -1,13 +1,13 @@
-let table, form, layer, layPage, flow, upload, laytpl;
+let layer, layPage, flow, upload, laytpl, utils, toast;
 let pageIndex = 1, pageSize = 8;
-layui.use(['table', 'form', 'layer', 'laypage', 'flow', 'upload', 'laytpl'], function () {
-    table = layui.table;
-    form = layui.form;
+layui.use([ 'layer', 'laypage', 'flow', 'upload', 'laytpl', 'toast','utils'], function () {
     layer = layui.layer;
     layPage = layui.laypage;
     flow = layui.flow;
     upload = layui.upload;
     laytpl = layui.laytpl;
+    utils = layui.utils;
+    toast = layui.toast;
     queryTable();
     initUpload();
 
@@ -26,10 +26,9 @@ layui.use(['table', 'form', 'layer', 'laypage', 'flow', 'upload', 'laytpl'], fun
  * 初始化页面数据
  */
 function queryTable() {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/attach/list",
-        contentType: "application/json",
         data: JSON.stringify({
             pageSize,
             pageIndex,
@@ -52,7 +51,6 @@ function queryTable() {
                     jump: function (obj, first) {
                         pageIndex = obj.curr;
                         pageSize = obj.limit;
-                        //首次不执行
                         if (!first) {
                             queryTable();
                         }
@@ -61,11 +59,8 @@ function queryTable() {
 
                 flow.lazyimg();
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("加载列表失败", {icon: 2});
         }
     })
 }
@@ -90,12 +85,12 @@ function initUpload() {
                 parent.layer.close(parent.layer.getFrameIndex(window.name));
                 parent.selectImg(res.data.url);
             } else {
-                layer.msg(res.msg, {icon: 2});
+                toast.error({message: res.msg,position: 'topCenter'});
             }
         }
         , error: function () {
             layer.close(loadIndex);
-            layer.msg("上传失败", {icon: 2});
+            toast.error({message: "上传失败",position: 'topCenter'});
         }
     });
 }

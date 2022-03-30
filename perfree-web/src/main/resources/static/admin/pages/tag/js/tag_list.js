@@ -1,6 +1,9 @@
-var utils, tableIns ;
-layui.use(['utils'], function () {
+var utils, tableIns,toast,layer,table ;
+layui.use(['utils', 'toast','layer','table'], function () {
+    toast = layui.toast;
     utils = layui.utils;
+    layer = layui.layer;
+    table = layui.table;
     initPage();
 });
 
@@ -35,7 +38,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -114,21 +117,17 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/tag/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
                     tableIns.reload();
-                    layer.msg(data.msg, {icon: 1});
+                    toast.success({message: "删除成功",position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("删除失败", {icon: 2});
             }
         });
         layer.close(index);

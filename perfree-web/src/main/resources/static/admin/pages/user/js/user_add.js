@@ -1,12 +1,14 @@
-let form, element, layer, upload;
+let form, element, layer, upload,utils,toast;
 initPage();
 
 function initPage() {
-    layui.use(['layer', 'form', 'element'], function () {
+    layui.use(['layer', 'form', 'element','utils', 'toast'], function () {
         form = layui.form;
         element = layui.element;
         layer = layui.layer;
         upload = layui.upload;
+        toast = layui.toast;
+        utils = layui.utils;
         formEvent();
         initEvent();
         loadRoleList();
@@ -24,23 +26,22 @@ function formEvent() {
     form.verify({});
     // 表单提交
     form.on('submit(addForm)', function (data) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/user/add",
-            contentType: "application/json",
             data: JSON.stringify(data.field),
             success: function (data) {
                 if (data.code === 200) {
-                    parent.queryTable();
-                    parent.layer.msg("添加成功", {icon: 1});
+                    parent.tableIns.reload();
+                    toast.success({message: '添加成功',position: 'topCenter'});
                     const index = parent.layer.getFrameIndex(window.name);
                     parent.layer.close(index);
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("添加失败", {icon: 2});
+                toast.error({message: '添加失败',position: 'topCenter'});
             }
         });
         return false;
@@ -77,13 +78,17 @@ function initEvent() {
  * 加载角色列表
  */
 function loadRoleList() {
-    $.get('/admin/role/getRoleList', function (data) {
-        let html = '<option value="">请选择</option>';
-        data.data.forEach(res => {
-            html += ' <option value="' + res.id + '">' + res.name + '</option>';
-        });
-        $("#roleId").html(html);
-        form.render('select');
+    utils.ajax({
+        type: "GET",
+        url: "/admin/role/getRoleList",
+        success: function (data) {
+            let html = '<option value="">请选择</option>';
+            data.data.forEach(res => {
+                html += ' <option value="' + res.id + '">' + res.name + '</option>';
+            });
+            $("#roleId").html(html);
+            form.render('select');
+        }
     });
 }
 

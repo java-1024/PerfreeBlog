@@ -1,8 +1,11 @@
-let table, form, flow;
-layui.use(['table', 'layer', 'form','flow'], function () {
+var table, form, flow, layer,utils,toast,tableIns;
+layui.use(['table', 'layer', 'form','flow','utils', 'toast'], function () {
     table = layui.table;
     form = layui.form;
     flow = layui.flow;
+    layer = layui.layer;
+    toast = layui.toast;
+    utils = layui.utils;
     initPage();
 });
 
@@ -38,7 +41,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -55,21 +58,17 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/user/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '用户列表',
-        totalRow: false,
         where: {
             form: {
                 userName: $("#userName").val(),
                 roleId: $("#roleId").val(),
             }
         },
-        limit: 30,
         cols: [[
             {type: 'checkbox'},
             {field: 'id', title: 'ID', width: 80,  sort: true},
@@ -121,21 +120,7 @@ function queryTable() {
                     "<a class='layui-btn layui-btn-danger layui-btn-xs' onclick='deleteData(\"{{d.id}}\")'>删除</a>" +
                     "</div>"
             },
-        ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
+        ]]
     });
     form.on('switch(status)', function (data) {
         const id = this.value;
@@ -165,21 +150,20 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/user/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("删除失败", {icon: 2});
+                toast.error({message: "删除失败",position: 'topCenter'});
             }
         });
         layer.close(index);
@@ -190,13 +174,17 @@ function deleteData(ids) {
  * 加载角色列表
  */
 function loadRoleList() {
-    $.get('/admin/role/getRoleList', function (data) {
-        let html = '<option value="">请选择</option>';
-        data.data.forEach(res => {
-            html += ' <option value="' + res.id + '">' + res.name + '</option>';
-        });
-        $("#roleId").html(html);
-        form.render('select');
+    utils.ajax({
+        type: "GET",
+        url: "/admin/role/getRoleList",
+        success: function (data) {
+            let html = '<option value="">请选择</option>';
+            data.data.forEach(res => {
+                html += ' <option value="' + res.id + '">' + res.name + '</option>';
+            });
+            $("#roleId").html(html);
+            form.render('select');
+        }
     });
 }
 
@@ -206,21 +194,20 @@ function loadRoleList() {
  */
 function resetPassword(id) {
     layer.confirm('确定要重置密码为123456吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/user/resetPassword",
-            contentType: "application/json",
             data: JSON.stringify({id: id}),
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: "重置成功",position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
             },
             error: function (data) {
-                layer.msg("重置失败", {icon: 2});
+                toast.error({message: "重置失败",position: 'topCenter'});
             }
         });
         layer.close(index);
@@ -232,21 +219,20 @@ function resetPassword(id) {
  * @param id id
  */
 function changeStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/user/changeStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg(data.msg, {icon: 1});
+                tableIns.reload();
+                toast.success({message: "操作成功",position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
         },
         error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
+            toast.error({message: "修改状态失败",position: 'topCenter'});
         }
     });
 }

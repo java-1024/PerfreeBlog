@@ -1,9 +1,14 @@
-let layer,form,element;
+let layer,form,element,toast, utils;
 var ws = null;
-layui.use(['layer','form','element'], function() {
+layui.use(['layer','form','element', 'toast','utils'], function() {
     layer = layui.layer;
     form = layui.form;
     element = layui.element;
+    toast = layui.toast;
+    utils = layui.utils;
+    layer.config({
+        offset: '20%'
+    });
     form.on('submit(optionForm2)', function(data){
         save(data);
         return false;
@@ -16,40 +21,39 @@ layui.use(['layer','form','element'], function() {
     element.on('tab(settingTab)', function(){
         if (this.getAttribute('lay-id') === "3") {
             let loadIndex = layer.load("正在检查更新...");
-            $.get("/checkUpdate",function(data){
-                layer.close(loadIndex);
-                if (data.code === 200) {
-                    $("#updateTitle").text(data.data.name);
-                    $("#updateVersion").text(data.data.tagName);
-                    $("#updateContent").html(data.data.body.replaceAll("\r\n","<br>"));
-                    $("#updateSize").text(data.data.sizeString);
-                } else if (data.code === 500) {
-                    console.log("检查更新出错");
-                    $(".update-content").html("检查更新出错,请重试");
-                } else {
-                    $(".update-content").html("暂无更新");
+            utils.ajax({
+                type: "GET",
+                url: "/checkUpdate",
+                success: function (data) {
+                    layer.close(loadIndex);
+                    if (data.code === 200) {
+                        $("#updateTitle").text(data.data.name);
+                        $("#updateVersion").text(data.data.tagName);
+                        $("#updateContent").html(data.data.body.replaceAll("\r\n","<br>"));
+                        $("#updateSize").text(data.data.sizeString);
+                    } else if (data.code === 500) {
+                        $(".update-content").html("检查更新出错,请重试");
+                    } else {
+                        $(".update-content").html("暂无更新");
+                    }
+                    $(".update-content").show();
                 }
-                $(".update-content").show();
             });
         }
     });
 });
 
 function save(data) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/setting/save",
-        contentType:"application/json",
         data: JSON.stringify(data.field),
         success:function(d){
             if (d.code === 200){
-                parent.layer.msg("保存成功", {icon: 1})
+                toast.success({message: '保存成功',position: 'topCenter'});
             } else {
-                layer.msg(d.msg, {icon: 2});
+                toast.error({message: d.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("保存失败", {icon: 2});
         }
     });
 }
@@ -57,11 +61,15 @@ function save(data) {
 function sendTestMail(){
     layer.prompt({title: '请输入收件人邮箱', formType: 3}, function(mail, index){
         layer.close(index);
-        $.post("/admin/setting/testMail",{mail: mail},function(data,status){
-            if (data.code === 200) {
-                layer.msg("发送成功", {icon: 1})
-            } else {
-                layer.msg(data.msg, {icon: 2});
+        utils.ajax({
+            type: "POST",
+            url: "/admin/setting/testMail?mail="+mail,
+            success:function(data){
+                if (data.code === 200) {
+                    toast.success({message: '发送成功',position: 'topCenter'});
+                } else {
+                    toast.error({message: data.msg,position: 'topCenter'});
+                }
             }
         });
     });

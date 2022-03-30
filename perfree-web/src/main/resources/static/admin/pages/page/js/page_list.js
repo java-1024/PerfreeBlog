@@ -1,7 +1,10 @@
-let table, form;
-layui.use(['table', 'layer', 'form'], function () {
+var table, form,toast, utils,tableIns,layer;
+layui.use(['table', 'layer', 'form', 'toast','utils','layer'], function () {
     table = layui.table;
     form = layui.form;
+    toast = layui.toast;
+    utils = layui.utils;
+    layer = layui.layer;
     initPage();
 });
 
@@ -29,7 +32,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -46,24 +49,19 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/article/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '文章列表',
-        totalRow: false,
         where: {
             form: {
                 title: $("#title").val(),
                 type: "page"
             }
         },
-        limit: 20,
         cols: [[
             {type: 'checkbox'},
-            {field: 'id', title: 'ID', width: 60},
             {
                 field: 'title',
                 title: '标题',
@@ -127,21 +125,7 @@ function queryTable() {
                     return html;
                 }
             },
-        ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
+        ]]
     });
 
     form.on('switch(isComment)', function (data) {
@@ -165,21 +149,17 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/page/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("删除失败", {icon: 2});
             }
         });
         layer.close(index);
@@ -191,21 +171,17 @@ function deleteData(ids) {
  * 更改是否可以评论
  */
 function changeCommentStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/changeCommentStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, isComment: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg(data.msg, {icon: 1});
+                tableIns.reload();
+                toast.success({message: '操作成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
         }
     });
 }
@@ -216,21 +192,17 @@ function changeCommentStatus(id, status) {
  * @param status
  */
 function changeStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/article/changeStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg(data.msg, {icon: 1});
+                tableIns.reload();
+                toast.success({message: '操作成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
         }
     });
 }

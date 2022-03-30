@@ -1,6 +1,9 @@
-let table;
-layui.use(['table'], function () {
+var table,toast,utils,layer, tableIns;
+layui.use(['table','toast','utils', 'layer'], function () {
     table = layui.table;
+    toast = layui.toast;
+    utils = layui.utils;
+    layer = layui.layer;
     initPage();
 });
 
@@ -35,7 +38,7 @@ function initPage() {
     $("#batchDeleteBtn").click(function () {
         const checkStatus = table.checkStatus('tableBox'), data = checkStatus.data;
         if (data.length <= 0) {
-            layer.msg("至少选择一条数据", {icon: 2});
+            toast.error({message: '至少选择一条数据',position: 'topCenter'});
         } else {
             let ids = "";
             data.forEach(res => {
@@ -52,20 +55,16 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/link/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '友链列表',
-        totalRow: false,
         where: {
             form: {
                 name: $("#linkName").val()
             }
         },
-        limit: 30,
         cols: [[
             {type: 'checkbox'},
             {field: 'id', title: 'ID', width: 80, sort: true},
@@ -98,20 +97,6 @@ function queryTable() {
                     "</div>"
             },
         ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
     });
 }
 
@@ -136,21 +121,17 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/link/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("删除失败", {icon: 2});
             }
         });
         layer.close(index);

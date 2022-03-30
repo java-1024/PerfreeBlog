@@ -1,10 +1,11 @@
-let form, element, layer, upload;
-layui.use(['layer', 'form', 'element','upload'], function () {
+let form, element, layer, upload, utils, toast;
+layui.use(['layer', 'form', 'element','upload', 'toast','utils'], function () {
     form = layui.form;
     element = layui.element;
     layer = layui.layer;
     upload = layui.upload;
-    // 表单验证
+    utils = layui.utils;
+    toast = layui.toast;
     form.verify({});
     let loadIndex;
     upload.render({
@@ -22,7 +23,7 @@ layui.use(['layer', 'form', 'element','upload'], function () {
             });
         },
         error: function () {
-            layer.msg("上传失败", {icon: 2});
+            toast.error({message: "上传失败",position: 'topCenter'});
         },
         before: function (obj) {
             this.data.desc = $("#desc").val();
@@ -32,12 +33,12 @@ layui.use(['layer', 'form', 'element','upload'], function () {
         done: function (res) {
             layer.close(loadIndex);
             if (res.code === 200) {
-                parent.queryTable();
-                parent.layer.msg("上传成功", {icon: 1});
+                parent.tableIns.reload();
+                toast.success({message: "上传成功",position: 'topCenter'});
                 const index = parent.layer.getFrameIndex(window.name);
                 parent.layer.close(index);
             } else {
-                layer.msg(res.msg, {icon: 2});
+                toast.error({message: res.msg,position: 'topCenter'});
             }
 
         }

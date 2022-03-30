@@ -63,7 +63,6 @@ function queryTable() {
         },
         cols: [[
             {type: 'checkbox'},
-            {field: 'id', title: 'ID', width: 60},
             {
                 field: 'title',
                 title: '文章标题',

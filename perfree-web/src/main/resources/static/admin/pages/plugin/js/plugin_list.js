@@ -1,7 +1,10 @@
-let table,upload;
-layui.use('table', function () {
+let table,upload, toast,utils,tableIns,layer;
+layui.use(['table', 'toast','utils','layer'], function () {
     table = layui.table;
     upload = layui.upload;
+    toast = layui.toast;
+    utils = layui.utils;
+    layer = layui.layer;
     initPage();
 });
 
@@ -32,19 +35,19 @@ function initPage() {
         done: function (res) {
             layer.close(loadIndex);
             if (res.code === 200) {
-                queryTable();
-                parent.layer.msg("插件安装成功", {icon: 1});
+                tableIns.reload();
+                toast.success({message: '插件安装成功',position: 'topCenter'});
                 setTimeout(function (){
                     localStorage.setItem("plugin", "success");
                     parent.location.reload();
                 }, 500)
             } else {
-                layer.msg(res.msg, {icon: 2});
+                toast.error({message: res.msg,position: 'topCenter'});
             }
         },
         error: function () {
             layer.close(loadIndex);
-            layer.msg("插件安装失败", {icon: 2});
+            toast.error({message: "插件安装失败",position: 'topCenter'});
         }
     });
 }
@@ -54,20 +57,16 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    table.render({
+    tableIns = utils.table({
         elem: '#tableBox',
         url: '/admin/plugin/list',
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        contentType: 'application/json',
         title: '插件列表',
-        totalRow: false,
         where: {
             form: {
                 name: $("#pluginName").val()
             }
         },
-        limit: 30,
         cols: [[
             {field: 'id', title: 'ID', width: 80, sort: true},
             {field: 'name', title: '插件名',  minWidth: 180},
@@ -102,21 +101,7 @@ function queryTable() {
                     return html;
                 }
             },
-        ]],
-        page: true,
-        response: {statusCode: 200},
-        parseData: function (res) {
-            return {
-                "code": res.code,
-                "msg": res.msg,
-                "count": res.total,
-                "data": res.data
-            };
-        },
-        request: {
-            pageName: 'pageIndex',
-            limitName: 'pageSize'
-        }
+        ]]
     });
 }
 
@@ -127,25 +112,21 @@ function queryTable() {
  */
 function deleteData(ids) {
     layer.confirm('确定要卸载吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/plugin/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg("插件卸载成功", {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: "插件卸载成功",position: 'topCenter'});
                     setTimeout(function (){
                         localStorage.setItem("plugin", "success");
                         parent.location.reload();
                     }, 500)
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("卸载失败", {icon: 2});
             }
         });
         layer.close(index);
@@ -153,49 +134,41 @@ function deleteData(ids) {
 }
 
 function startPlugin(id){
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/plugin/startPlugin",
-        contentType: "application/json",
         data: id,
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg("插件启用成功", {icon: 1});
+                tableIns.reload();
+                toast.success({message: "插件启用成功",position: 'topCenter'});
                 setTimeout(function (){
                     localStorage.setItem("plugin", "success");
                     parent.location.reload();
                 }, 500)
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("插件启用失败", {icon: 2});
         }
     });
 }
 
 function stopPlugin(id){
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/plugin/stopPlugin",
-        contentType: "application/json",
         data: id,
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg("插件禁用成功", {icon: 1});
+                tableIns.reload();
+                toast.success({message: "插件禁用成功",position: 'topCenter'});
                 setTimeout(function (){
                     localStorage.setItem("plugin", "success");
                     parent.location.reload();
                 }, 500)
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("插件禁用失败", {icon: 2});
         }
     });
 }

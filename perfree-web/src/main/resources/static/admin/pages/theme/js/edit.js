@@ -6,13 +6,15 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     matchTags: {bothTags: true},
     extraKeys: {"Alt-/": "autocomplete"},	// 高亮当前行
 });
-var zTreeObj, layer, form, upload, currTreeNode;
+var zTreeObj, layer, form, upload, currTreeNode,utils,toast;
 
-layui.use(['util','form', 'layer','upload'], function(){
+layui.use(['util','form', 'layer','upload','utils', 'toast'], function(){
     layer = layui.layer;
     util = layui.util;
     form = layui.form;
     upload = layui.upload;
+    toast = layui.toast;
+    utils = layui.utils;
 
     var settings = {
         data: {
@@ -34,9 +36,10 @@ layui.use(['util','form', 'layer','upload'], function(){
     };
 
     // 加载文件列表
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/theme/getFileListByTheme",
+        contentType: 'application/x-www-form-urlencoded',
         data:  {path: $("#path").val()},
         success: function (d) {
             d.data.forEach(function (value) {
@@ -47,11 +50,11 @@ layui.use(['util','form', 'layer','upload'], function(){
             if (d.code === 200) {
                 zTreeObj = $.fn.zTree.init($("#treeDemo"), settings, d.data);
             } else {
-                layer.msg("加载文件列表失败", {icon: 2});
+                toast.error({message: '加载文件列表失败',position: 'topCenter'});
             }
         },
         error: function () {
-            layer.msg("加载文件列表失败", {icon: 2});
+            toast.error({message: '加载文件列表失败',position: 'topCenter'});
         }
     });
 
@@ -78,7 +81,7 @@ layui.use(['util','form', 'layer','upload'], function(){
         },
         choose: function (obj) {},
         error: function () {
-            layer.msg("上传失败", {icon: 2});
+            toast.error({message: '上传失败',position: 'topCenter'});
         },
         before: function (obj) {
             loadIndex = layer.load("正在上传");
@@ -86,14 +89,14 @@ layui.use(['util','form', 'layer','upload'], function(){
         done: function (res) {
             layer.close(loadIndex);
             if (res.code === 200) {
-                layer.msg("上传成功", {icon: 1});
+                toast.success({message: '上传成功',position: 'topCenter'});
                 if ( res.data.fileType === "dir") {
                     res.data.iconSkin = "dir";
                 }
                 zTreeObj.addNodes(currTreeNode, res.data);
                 zTreeObj.refresh();
             } else {
-                layer.msg(res.msg, {icon: 2});
+                toast.error({message: res.msg,position: 'topCenter'});
             }
         }
     });
@@ -143,7 +146,7 @@ function rightClick(event, treeId, treeNode){
         $("#m_uploadFile").hide();
         $("#m_rename").hide();
         $("#m_del").hide();
-        layer.msg("主题必要文件,不允许重命名及删除操作", {icon: 2});
+        toast.error({message: "主题必要文件,不允许重命名及删除操作",position: 'topCenter'});
     } else if (treeNode.obj.fileType !== "dir") {
         $("#m_add").hide();
         $("#m_addDir").hide();
@@ -193,21 +196,22 @@ $("#rMenu").on("click","#m_rename",function () {
 // 删除
 $("#rMenu").on("click","#m_del",function () {
     $("#rMenu").css({"visibility" : "hidden"});
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/theme/deleteFile",
+        contentType: 'application/x-www-form-urlencoded',
         data:  {path:  currTreeNode.obj.path},
         success: function (d) {
             if (d.code === 200) {
                 zTreeObj.removeNode(currTreeNode);
                 zTreeObj.refresh();
-                layer.msg("删除成功", {icon: 1});
+                toast.success({message: "删除成功",position: 'topCenter'});
             } else {
-                layer.msg("删除失败", {icon: 2});
+                toast.error({message: "删除失败",position: 'topCenter'});
             }
         },
         error: function () {
-            layer.msg("删除失败", {icon: 2});
+            toast.error({message: "删除失败",position: 'topCenter'});
         }
     });
 });
@@ -225,10 +229,11 @@ function createFileOrDir(type) {
         } else {
             param = {fileName: name, theme: $("#path").val(), filePath: currTreeNode.obj.filePath,type: type, path: currTreeNode.obj.path};
         }
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/theme/createFileOrDir",
             data:  param,
+            contentType: 'application/x-www-form-urlencoded',
             success: function (d) {
                 if (d.code === 200) {
                     var newNode;
@@ -248,11 +253,11 @@ function createFileOrDir(type) {
                     }
                     zTreeObj.selectNode(newNode[0]);
                 } else {
-                    layer.msg("文件创建失败", {icon: 2});
+                    toast.error({message: "文件创建失败",position: 'topCenter'});
                 }
             },
             error: function () {
-                layer.msg("文件创建失败", {icon: 2});
+                toast.error({message: "文件创建失败",position: 'topCenter'});
             }
         });
     });
@@ -266,10 +271,11 @@ function createFileOrDir(type) {
  * @param isCancel
  */
 function beforeRename(treeId, treeNode,newName, isCancel){
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/theme/reNameFile",
         data:  {filePath: treeNode.obj.filePath, newName: newName, id: treeNode.id, theme: $("#path").val(),path: treeNode.obj.path},
+        contentType: 'application/x-www-form-urlencoded',
         success: function (d) {
             if (d.code === 200) {
                 currTreeNode.title = d.data.rename.title;
@@ -288,11 +294,11 @@ function beforeRename(treeId, treeNode,newName, isCancel){
                 }
                 zTreeObj.refresh();
             } else {
-                layer.msg("重命名失败", {icon: 2});
+                toast.error({message: "重命名失败",position: 'topCenter'});
             }
         },
         error: function () {
-            layer.msg("重命名失败", {icon: 2});
+            toast.error({message: "重命名失败",position: 'topCenter'});
         }
     });
 }
@@ -303,10 +309,11 @@ function beforeRename(treeId, treeNode,newName, isCancel){
  */
 function loadFileContent(treeNode) {
     let loadIndex = layer.load();
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/theme/getFileContent",
         data: {path: treeNode.obj.path},
+        contentType: 'application/x-www-form-urlencoded',
         success: function (d) {
             layer.close(loadIndex);
             if (d.code === 200) {
@@ -325,12 +332,12 @@ function loadFileContent(treeNode) {
                         break;
                 }
             } else {
-                layer.msg("加载文件失败", {icon: 2});
+                toast.error({message: "加载文件失败",position: 'topCenter'});
             }
         },
         error: function () {
             layer.close(loadIndex);
-            layer.msg("加载文件失败", {icon: 2});
+            toast.error({message: "加载文件失败",position: 'topCenter'});
         }
     });
 }
@@ -348,21 +355,22 @@ window.addEventListener("keydown", function(e) {
 
 function save() {
     let loadIndex = layer.load();
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/theme/saveFileContent",
+        contentType: 'application/x-www-form-urlencoded',
         data: {path: $("#currEditFilePath").val(), content: editor.getValue()},
         success: function (d) {
             layer.close(loadIndex);
             if (d.code === 200) {
-                layer.msg("文件保存成功", {icon: 1});
+                toast.success({message: "文件保存成功",position: 'topCenter'});
             } else {
-                layer.msg("文件保存失败", {icon: 2});
+                toast.error({message: "文件保存失败",position: 'topCenter'});
             }
         },
         error: function () {
             layer.close(loadIndex);
-            layer.msg("文件保存失败", {icon: 2});
+            toast.error({message: "文件保存失败",position: 'topCenter'});
         }
     });
 }

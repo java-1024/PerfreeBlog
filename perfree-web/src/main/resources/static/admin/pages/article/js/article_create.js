@@ -68,6 +68,7 @@ function submitArticle(data) {
         data: JSON.stringify(data),
         success: function (d) {
             if (d.code === 200) {
+                location.reload();
                 toast.success({message: '文章发表成功',position: 'topCenter'});
                 parent.toPage('/admin/article');
             } else {

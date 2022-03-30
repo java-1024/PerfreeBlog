@@ -1,10 +1,12 @@
-let table, treeTable, layPage, form;
+var table, treeTable, layPage, form, utils, toast, tableIns;
 let pageIndex = 1, pageSize = 20;
-layui.use(['table', 'treeTable', 'laypage', 'form'], function () {
+layui.use(['table', 'treeTable', 'laypage', 'form', 'toast','utils'], function () {
     table = layui.table;
     treeTable = layui.treeTable;
     layPage = layui.laypage;
     form = layui.form;
+    utils = layui.utils;
+    toast = layui.toast;
     initPage();
 });
 
@@ -35,7 +37,7 @@ function initPage() {
  * 查询表格数据
  */
 function queryTable() {
-    treeTable.render({
+    tableIns = treeTable.render({
         elem: '#tableBox',
         url: '/admin/category/list',
         method: 'post',
@@ -51,7 +53,7 @@ function queryTable() {
             }
         },
         tree: {
-            iconIndex: 1,
+            iconIndex: 0,
             isPidData: false,
             idName: 'id',
             childName: 'children'
@@ -81,7 +83,6 @@ function queryTable() {
             };
         },
         cols: [[
-            {field: 'id', title: 'ID', width: 80},
             {field: 'name', minWidth: 160,title: '分类名'},
             {field: 'desc', minWidth: 260,title: '描述'},
             {field: 'count', minWidth: 80,align: 'center', title: '文章数量'},
@@ -144,7 +145,7 @@ function editData(id) {
     layer.open({
         title: "编辑分类",
         type: 2,
-        area: common.layerArea($("html")[0].clientWidth, 500, 400),
+        area: common.layerArea($("html")[0].clientWidth, 500, 530),
         shadeClose: true,
         anim: 1,
         content: '/admin/category/editPage/' + id
@@ -157,21 +158,17 @@ function editData(id) {
  */
 function deleteData(ids) {
     layer.confirm('确定要删除吗?', {icon: 3, title: '提示'}, function (index) {
-        $.ajax({
+        utils.ajax({
             type: "POST",
             url: "/admin/category/del",
-            contentType: "application/json",
             data: ids,
             success: function (data) {
                 if (data.code === 200) {
-                    queryTable();
-                    layer.msg(data.msg, {icon: 1});
+                    tableIns.reload();
+                    toast.success({message: '删除成功',position: 'topCenter'});
                 } else {
-                    layer.msg(data.msg, {icon: 2});
+                    toast.error({message: data.msg,position: 'topCenter'});
                 }
-            },
-            error: function (data) {
-                layer.msg("删除失败", {icon: 2});
             }
         });
         layer.close(index);
@@ -189,7 +186,7 @@ function add(pid = -1) {
     layer.open({
         title: title,
         type: 2,
-        area: common.layerArea($("html")[0].clientWidth, 500, 400),
+        area: common.layerArea($("html")[0].clientWidth, 500, 530),
         shadeClose: true,
         anim: 1,
         content: '/admin/category/addPage/' + pid
@@ -202,21 +199,17 @@ function add(pid = -1) {
  * @param status status
  */
 function changeStatus(id, status) {
-    $.ajax({
+    utils.ajax({
         type: "POST",
         url: "/admin/category/changeStatus",
-        contentType: "application/json",
         data: JSON.stringify({id: id, status: status}),
         success: function (data) {
             if (data.code === 200) {
-                queryTable();
-                layer.msg(data.msg, {icon: 1});
+                tableIns.reload();
+                toast.success({message: '修改成功',position: 'topCenter'});
             } else {
-                layer.msg(data.msg, {icon: 2});
+                toast.error({message: data.msg,position: 'topCenter'});
             }
-        },
-        error: function (data) {
-            layer.msg("修改状态失败", {icon: 2});
         }
     });
 }
