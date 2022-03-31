@@ -29,6 +29,8 @@ html,body{
     height: 100vh;
     line-height: 100vh;
     background: #eff2f5;
+    opacity: 1;
+    transition: opacity .5s;
 }
 #frame-loading{
     width: 100%;
